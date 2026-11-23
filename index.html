@@ -78,6 +78,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 .seg span{display:block;text-align:center;padding:8px;border-radius:9px;color:var(--muted)}
 .seg input:checked+span{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,18,22,.12)}
 .seg input:focus-visible+span{outline:2px solid var(--accent)}
+.req{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-left:4px}
 .sig{font-size:12px;color:var(--muted);background:var(--accent-soft);border-radius:10px;padding:9px 12px}
 .sig b{color:var(--ink)}
 .btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;color:#fff;background:linear-gradient(90deg,var(--sky),var(--indigo));cursor:pointer;box-shadow:0 8px 20px -8px rgba(70,82,160,.6);transition:transform .15s,box-shadow .15s}
@@ -224,7 +225,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
       <div class="sec">
         <h2><b>3</b>Personaliza el informe</h2>
         <label>Nombre del cliente<input id="cliente" placeholder="Quién recibe el informe"></label>
-        <label>Agente que lo atiende<input id="agente" placeholder="Tu nombre"></label>
+        <label>Agente que lo atiende <span class="req">obligatorio</span><input id="agente" placeholder="Tu nombre y apellido" required autocomplete="name"></label>
         <label>Dirección o referencia del inmueble<input id="referencia" placeholder="Opcional"></label>
         <div class="sig" id="sig">Así firma el informe: <b>Tu nombre · Agente Cool House</b></div>
       </div>
@@ -258,6 +259,17 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
   const firma = () => `${$("agente").value.trim() || "Equipo Cool House"} · Agente Cool House`;
 
   let ROWS = [], CENTROIDS = {}, META = {}, LOGO = null, lastText = "", LAST = null;
+  // Google Sheet "Informes Termómetro Inmobiliario Cool House" (Apps Script web app). Empty = logging off.
+  const REGISTRO_URL = "https://script.google.com/macros/s/AKfycby7dO1u0xu4xPUpDkVSU0KA781MMK8lzv9Qy88JZqLBKIcLO3OzBPh8Qwseg4EtqPcP/exec";
+  function registrar(evento){
+    if (!REGISTRO_URL || !LAST) return;
+    const {s, v, word, lo, hi, est, user, diff} = LAST;
+    const d = {evento, agente:$("agente").value.trim(), cliente:$("cliente").value.trim(), referencia:$("referencia").value.trim(),
+      barrio:s.barrio, operacion:s.op==="V"?"Venta":"Arriendo", tipo:s.tipo, estrato:s.estrato, area:s.area, hab:s.hab, banos:s.banos, gar:s.gar,
+      antig:s.ant?ANT[s.ant]:"", precio:s.precio, ppm:Math.round(user), mediana:Math.round(v.med), diff:Math.round(diff*1000)/1000,
+      resultado:word, desde:Math.round(lo), hasta:Math.round(hi), estimado:Math.round(est), comparables:v.n, confianza:v.conf};
+    try { fetch(REGISTRO_URL, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(d), keepalive:true}).catch(()=>{}); } catch {}
+  }
 
   // Row: [portal, op, tipo, estrato, barrio, precio, m2, hab, banos, garajes, antig, admin, lat, lng, id]
   function prep(data){
@@ -551,6 +563,8 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
   async function downloadPdf(){
     const msg = $("copied");
     if (!window.jspdf || !LAST){ msg.textContent = "No se pudo preparar el PDF. Recarga la página e inténtalo de nuevo."; return; }
+    if (!$("agente").value.trim()){ msg.textContent = "Escribe tu nombre en “Agente que lo atiende” para descargar el informe."; $("agente").focus(); $("agente").scrollIntoView({behavior:"smooth", block:"center"}); return; }
+    registrar("PDF descargado");
     const cli = $("cliente").value.trim();
     const name = `Estimacion de mercado ${cli || LAST.s.barrio} - Cool House.pdf`.replace(/[\\/:*?"<>|]+/g," ");
     const blob = buildPdf().output("blob");
@@ -583,6 +597,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
     const s = readForm();
     if (!s.barrio || !s.area || !s.precio) return;
     render(s, false);
+    registrar("Informe generado");
     if (matchMedia("(max-width:900px)").matches) $("report").scrollIntoView({behavior:"smooth"});
   });
 
