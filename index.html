@@ -123,6 +123,54 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
 .empty{color:var(--muted);padding:40px 6px}
 footer{color:var(--muted);font-size:12px;padding-block:0 32px}
 footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:18px}
+/* ---------- phones ---------- */
+.report{grid-template-columns:minmax(0,1fr)}
+.mmeta{display:none}
+.morebtn{display:none}
+.mlong{display:none}
+@media (max-width:640px){
+  body{font-size:15px}
+  .brandbar .inner{padding-block:10px 13px}
+  .hero .inner{padding-block:28px 96px;gap:10px}
+  .hero p{font-size:14px}
+  .chip{font-size:11px;padding:4px 9px}
+  main .inner{gap:16px;margin-top:-72px;padding-bottom:36px}
+  .card{border-radius:16px}
+  .formcard{padding:18px}
+  .sec{padding-bottom:16px;margin-bottom:16px}
+  input,select{font-size:16px;padding:11px 12px}
+  .btn{width:100%;padding:14px 18px;font-size:16px}
+  form > .btn{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+  .report{padding:18px;gap:18px}
+  .verdict{padding:18px;gap:12px;justify-items:center;text-align:center}
+  .vtext{justify-items:center}
+  .pill{justify-self:center}
+  .gauge{width:100%;max-width:230px}
+  .stats{grid-template-columns:1fr 1fr;gap:8px}
+  .stat{padding:12px}
+  .stat .v{font-size:16px}
+  .stat .k{font-size:10px}
+  .actions{display:grid;grid-template-columns:1fr;gap:8px}
+  .actions .hint{text-align:center}
+  .tablebox{border:0;border-radius:0;overflow:visible}
+  table,tbody,tr,td{display:block}
+  thead{display:none}
+  tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--surface)}
+  tr:last-child td{border-bottom:0}
+  td{padding:0;border:0;text-align:left!important;white-space:normal}
+  td.c-b{font-weight:600}
+  td.c-p{justify-self:end}
+  td.c-pr{font-family:var(--font-display);font-weight:700;font-size:15px}
+  td.c-l{justify-self:end;align-self:center}
+  td.c-m2,td.c-ppm,td.c-h,td.c-g,td.c-e{display:none}
+  .mlong{display:inline}
+  tr.more{display:none}
+  .showall tr.more{display:grid}
+  .morebtn{display:block;margin-top:4px}
+  td.mmeta{display:block;grid-column:1 / -1;font-size:12px;color:var(--muted)}
+  .disc{font-size:12.5px}
+  footer .inner{flex-direction:column}
+}
 @media (prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover{transform:none}}
 </style>
 </head>
@@ -299,7 +347,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
   }
 
   function strip(v, s){
-    const W=640,H=118,P=26; const vals=v.comps.map(c=>c.ppm); const user=s.precio/s.area;
+    const W=matchMedia("(max-width:640px)").matches?380:640,H=118,P=26; const vals=v.comps.map(c=>c.ppm); const user=s.precio/s.area;
     let lo=Math.min(...vals,user), hi=Math.max(...vals,user); const pad=(hi-lo)*0.08||hi*0.05; lo-=pad; hi+=pad;
     const x = val => P + (val-lo)/(hi-lo)*(W-2*P);
     const col = user > v.med*1.1 ? "var(--high)" : user < v.med*0.9 ? "var(--low)" : "var(--ok)";
@@ -307,9 +355,9 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
     g += `<line x1="${P}" x2="${W-P}" y1="80" y2="80" stroke="var(--line)"/>`;
     g += v.comps.map((c,i)=>`<circle cx="${x(c.ppm).toFixed(1)}" cy="${44+((i*37)%24)}" r="4.5" fill="var(--accent)" fill-opacity=".7"><title>${esc(c.barrio)} · ${esc(copM(c.ppm))}/m²</title></circle>`).join("");
     g += `<line x1="${x(v.med).toFixed(1)}" x2="${x(v.med).toFixed(1)}" y1="24" y2="84" stroke="var(--indigo)" stroke-width="2" stroke-dasharray="4 3"/>`;
-    g += `<text x="${Math.min(W-70,Math.max(70,x(v.med))).toFixed(1)}" y="17" text-anchor="middle" font-size="11" fill="var(--muted)" font-weight="600">Mediana ${esc(copM(v.med))}/m²</text>`;
+    g += `<text x="${Math.min(W-95,Math.max(95,x(v.med))).toFixed(1)}" y="17" text-anchor="middle" font-size="11" fill="var(--muted)" font-weight="600">Mediana ${esc(copM(v.med))}/m²</text>`;
     g += `<path d="M${x(user)-7},98 L${x(user)+7},98 L${x(user)},86 Z" fill="${col}"/>`;
-    g += `<text x="${Math.min(W-80,Math.max(80,x(user))).toFixed(1)}" y="114" text-anchor="middle" font-size="11" fill="${col}" font-weight="700">Este inmueble ${esc(copM(user))}/m²</text>`;
+    g += `<text x="${Math.min(W-100,Math.max(100,x(user))).toFixed(1)}" y="114" text-anchor="middle" font-size="11" fill="${col}" font-weight="700">Este inmueble ${esc(copM(user))}/m²</text>`;
     return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Precio por m² de los comparables">${g}</svg>`;
   }
 
@@ -326,7 +374,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
     const lead = cls==="ok" ? `Está a ${pct}% de la mediana del mercado comparable.` : `Está ${pct}% ${cls==="alto"?"por encima":"por debajo"} de la mediana del mercado comparable.`;
     const zona = `${esc(s.barrio)} y alrededores (hasta ${String(v.radius).replace(".",",")} km)`;
     const cliente = $("cliente").value.trim();
-    const rows = mixPortals(v.comps,15).map(c => `<tr><td>${esc(c.barrio)}</td><td><span class="src">${c.portal==="FR"?"Finca Raíz":"Metrocuadrado"}</span></td><td>${copM(c.precio)}</td><td>${Math.round(c.m2)}</td><td>${copM(c.ppm)}</td><td>${c.hab??"–"}</td><td>${c.gar??"–"}</td><td>${c.estrato??"–"}</td><td>${/^https:\/\//.test(c.url)?`<a href="${esc(c.url)}" target="_blank" rel="noopener">Ver</a>`:"–"}</td></tr>`).join("");
+    const rows = mixPortals(v.comps,15).map((c,i) => `<tr${i>=6?' class="more"':""}><td class="c-b">${esc(c.barrio)}</td><td class="c-p"><span class="src">${c.portal==="FR"?"Finca Raíz":"Metrocuadrado"}</span></td><td class="c-pr">${copM(c.precio)}</td><td class="c-m2">${Math.round(c.m2)}</td><td class="c-ppm">${copM(c.ppm)}</td><td class="c-h">${c.hab??"–"}</td><td class="c-g">${c.gar??"–"}</td><td class="c-e">${c.estrato??"–"}</td><td class="c-l">${/^https:\/\//.test(c.url)?`<a href="${esc(c.url)}" target="_blank" rel="noopener">Ver<span class="mlong"> anuncio</span></a>`:"–"}</td><td class="mmeta">${Math.round(c.m2)} m² · ${copM(c.ppm)}/m²${c.hab!=null?` · ${c.hab} hab`:""}${c.gar!=null?` · ${c.gar} parq`:""}${c.estrato?` · estrato ${c.estrato}`:""}</td></tr>`).join("");
     el.innerHTML = `
       <div class="rhead">
         <div class="who">${cliente?`Informe para <b>${esc(cliente)}</b> · `:""}<b>${esc(firma())}</b></div>
@@ -352,7 +400,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
       <div class="block"><h4>Anuncios comparables · ${zona}</h4>
         <div class="tablebox"><table>
           <thead><tr><th>Barrio</th><th>Portal</th><th>${s.op==="V"?"Precio":"Canon"}</th><th>m²</th><th>Por m²</th><th>Hab</th><th>Parq</th><th>Estr</th><th></th></tr></thead>
-          <tbody>${rows}</tbody></table></div></div>
+          <tbody>${rows}</tbody></table></div>${Math.min(15,v.comps.length)>6?`<button class="btn ghost morebtn" id="more" type="button">Ver todos los comparables (${Math.min(15,v.comps.length)})</button>`:""}</div>
       <p class="disc">Esta es una estimación que parte del precio por metro cuadrado. La valoración de elementos subjetivos que puedan aumentar o disminuir el precio (estado y acabados, vista, piso, iluminación, remodelaciones, entre otros) queda a criterio del propietario, con la asesoría y la experiencia de su agente Cool House.</p>
       <p class="note">Método: anuncios de ${s.op==="V"?"venta":"arriendo"} del mismo tipo, con área entre 60% y 160% de la del inmueble, en el barrio y su entorno, priorizando estrato, área, habitaciones, parqueaderos y antigüedad similares. Se descartan valores atípicos y se usa la mediana ponderada del precio por m². "Alto" o "bajo" indica más de 10% de diferencia. Los precios de anuncio suelen estar por encima del precio de cierre.</p>`;
     LAST = {s, v, cls, word, lead, est, lo, hi, unit, user, diff};
@@ -369,6 +417,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
       firma()
     ].filter(Boolean).join("\n");
     $("pdf").addEventListener("click", downloadPdf);
+    if ($("more")) $("more").addEventListener("click", () => { $("report").classList.add("showall"); $("more").remove(); });
     $("copy").addEventListener("click", async () => {
       try { await navigator.clipboard.writeText(lastText); $("copied").textContent = "Texto copiado"; }
       catch { const ta = document.createElement("textarea"); ta.value = lastText; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); $("copied").textContent="Texto copiado";}catch{ $("copied").textContent="Selecciona y copia el texto manualmente"; } ta.remove(); }
