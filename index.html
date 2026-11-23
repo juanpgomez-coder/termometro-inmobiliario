@@ -271,6 +271,16 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
     return {n:comps.length, comps, med, p25, p75, conf, radius};
   }
 
+  // Best comparables, alternating Finca Raíz and Metrocuadrado so both portals always appear
+  function mixPortals(list, n){
+    const fr = list.filter(c => c.portal==="FR"), mc = list.filter(c => c.portal!=="FR"), out = [];
+    while (out.length < n && (fr.length || mc.length)){
+      if (fr.length) out.push(fr.shift());
+      if (out.length < n && mc.length) out.push(mc.shift());
+    }
+    return out;
+  }
+
   // ---------- gauge (thermometer dial): -30% … +30% versus market median ----------
   function gaugeSVG(diff){
     const W=260,H=150,cx=130,cy=132,r=104,sw=20;
@@ -316,7 +326,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
     const lead = cls==="ok" ? `Está a ${pct}% de la mediana del mercado comparable.` : `Está ${pct}% ${cls==="alto"?"por encima":"por debajo"} de la mediana del mercado comparable.`;
     const zona = `${esc(s.barrio)} y alrededores (hasta ${String(v.radius).replace(".",",")} km)`;
     const cliente = $("cliente").value.trim();
-    const rows = v.comps.slice(0,15).map(c => `<tr><td>${esc(c.barrio)}</td><td><span class="src">${c.portal==="FR"?"Finca Raíz":"Metrocuadrado"}</span></td><td>${copM(c.precio)}</td><td>${Math.round(c.m2)}</td><td>${copM(c.ppm)}</td><td>${c.hab??"–"}</td><td>${c.gar??"–"}</td><td>${c.estrato??"–"}</td><td>${/^https:\/\//.test(c.url)?`<a href="${esc(c.url)}" target="_blank" rel="noopener">Ver</a>`:"–"}</td></tr>`).join("");
+    const rows = mixPortals(v.comps,15).map(c => `<tr><td>${esc(c.barrio)}</td><td><span class="src">${c.portal==="FR"?"Finca Raíz":"Metrocuadrado"}</span></td><td>${copM(c.precio)}</td><td>${Math.round(c.m2)}</td><td>${copM(c.ppm)}</td><td>${c.hab??"–"}</td><td>${c.gar??"–"}</td><td>${c.estrato??"–"}</td><td>${/^https:\/\//.test(c.url)?`<a href="${esc(c.url)}" target="_blank" rel="noopener">Ver</a>`:"–"}</td></tr>`).join("");
     el.innerHTML = `
       <div class="rhead">
         <div class="who">${cliente?`Informe para <b>${esc(cliente)}</b> · `:""}<b>${esc(firma())}</b></div>
@@ -463,7 +473,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
     doc.autoTable({
       startY: y+2, margin:{left:M, right:M},
       head:[["Barrio","Portal",s.op==="V"?"Precio":"Canon","m²","Precio por m²","Hab","Parq"]],
-      body: v.comps.slice(0,4).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
+      body: mixPortals(v.comps,4).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
       theme:"plain",
       styles:{font:"helvetica", fontSize:8, cellPadding:{top:1.6,bottom:1.6,left:2,right:2}, textColor:C.ink, lineColor:C.line, lineWidth:{bottom:0.2}},
       headStyles:{fontStyle:"bold", textColor:C.muted, fontSize:7, fillColor:C.field},
