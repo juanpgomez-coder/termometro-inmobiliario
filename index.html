@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Valora en segundos si el precio de un inmueble de estrato 5 o 6 en Bogotá está alto, en rango o bajo frente a los anuncios de Finca Raíz y Metrocuadrado.">
-<title>Termómetro Inmobiliario · Cool House</title>
+<title>Termómetro Inmobiliario Cool House</title>
 <link rel="icon" href="img/logo-cool-house.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
@@ -94,7 +94,7 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
 <div class="wrap">
   <header>
     <div>
-      <h1>Termómetro Inmobiliario</h1>
+      <h1>Termómetro Inmobiliario Cool House</h1>
       <p class="sub">Ingresa los datos del inmueble y el precio que te consultan. El informe lo compara con anuncios publicados en Finca Raíz y Metrocuadrado de barrios estrato 5 y 6 de Bogotá.</p>
     </div>
     <div class="meta" id="meta">Cargando datos del mercado…</div>
@@ -265,14 +265,17 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     const agente = $("agente").value.trim(), prop = $("propietario").value.trim(), ref = $("referencia").value.trim();
     const hoy = new Date().toLocaleDateString("es-CO",{day:"numeric",month:"long",year:"numeric"});
     // header: Cool House logo left, report title right, blue gradient rule below
-    if (LOGO) { try { doc.addImage(LOGO, "PNG", M, 8, 40, 20.7); } catch {} }
+    if (LOGO) { try { doc.addImage(LOGO, "PNG", M, 8, 40, 20.7, "logo", "FAST"); } catch {} }
     doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.setFontSize(16);
     doc.text("Informe de precio de mercado", W-M, 16, {align:"right"});
     doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(...C.muted);
-    doc.text(`${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} · Estrato ${s.estrato} · Bogotá`, W-M, 22, {align:"right"});
+    doc.text(`Termómetro Inmobiliario Cool House · ${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} · Estrato ${s.estrato}`, W-M, 22, {align:"right"});
     doc.text(hoy, W-M, 27, {align:"right"});
     for (let i = 0; i < 60; i++){ const t = i/59, c = C.sky.map((v,k)=>Math.round(v+(C.accent2[k]-v)*t)); doc.setFillColor(...c); doc.rect(M + (W-2*M)*i/60, 32, (W-2*M)/60 + 0.2, 1.2, "F"); }
     let y = 42;
+    doc.setFontSize(10); doc.setTextColor(...C.ink);
+    const intro = `Como parte del servicio integral que ofrecemos a nuestros clientes, le enviamos esta estimación del valor de mercado de su inmueble, basada en el precio por metro cuadrado de inmuebles comparables publicados actualmente en Finca Raíz y Metrocuadrado.`;
+    const introL = doc.splitTextToSize(intro, W-2*M); doc.text(introL, M, y); y += introL.length*4.6 + 5;
     doc.setTextColor(...C.ink); doc.setFontSize(10);
     const metaL = [];
     if (prop) metaL.push(["Para", prop]);
@@ -290,7 +293,7 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.text(word.toUpperCase(), M+11, y+11.6);
     doc.setTextColor(...C.ink); doc.setFontSize(11); doc.setFont("helvetica","normal");
     doc.text(doc.splitTextToSize(`${lead} Rango de precio sugerido: ${pdfM(lo)} a ${pdfM(hi)}${unit}.`, W-2*M-12), M+6, y+21);
-    y += 38;
+    y += 36;
     // stats row
     const stats = [["Precio por m² evaluado", pdfM(user)], ["Mediana del mercado por m²", pdfM(v.med)], ["Valor estimado", pdfM(est)+unit], ["Anuncios comparables", `${v.n} (confianza ${v.conf.toLowerCase()})`]];
     const sw = (W-2*M)/4;
@@ -311,20 +314,20 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     doc.setFontSize(8); doc.setTextColor(...C.ok); doc.text(`Mediana ${pdfM(v.med)}`, Math.min(W-M-30, Math.max(M+20, X(v.med))), y-1, {align:"center"});
     doc.setTextColor(...col); doc.text(`Evaluado ${pdfM(user)}`, Math.min(W-M-25, Math.max(M+25, X(user))), y+29, {align:"center"});
     doc.setTextColor(...C.muted); doc.text("Cada punto es un anuncio comparable. La franja verde es el rango típico (50% central).", M, y+34);
-    y += 40;
+    y += 38;
     // comparables table
     doc.setFontSize(10); doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.text("Anuncios comparables publicados", M, y); doc.setFont("helvetica","normal");
     doc.autoTable({
       startY: y+3, margin:{left:M, right:M},
       head:[["Barrio","Portal",s.op==="V"?"Precio":"Canon","m²","Precio por m²","Hab","Parq"]],
-      body: v.comps.slice(0,12).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
-      styles:{fontSize:8, cellPadding:1.8, textColor:C.ink, lineColor:C.line, lineWidth:0.1},
+      body: v.comps.slice(0,10).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
+      styles:{fontSize:8, cellPadding:1.5, textColor:C.ink, lineColor:C.line, lineWidth:0.1},
       headStyles:{fillColor:C.accent, textColor:[255,255,255], fontStyle:"bold"},
       alternateRowStyles:{fillColor:[246,248,247]},
       columnStyles:{2:{halign:"right"},3:{halign:"right"},4:{halign:"right"},5:{halign:"center"},6:{halign:"center"}}
     });
     let fy = doc.lastAutoTable.finalY + 8;
-    if (fy > 262){ doc.addPage(); fy = 20; }
+    if (fy > 270){ doc.addPage(); fy = 20; }
     doc.setFontSize(7.5); doc.setTextColor(...C.muted);
     doc.text(doc.splitTextToSize(`Metodología: comparación con ${v.n} anuncios de ${s.op==="V"?"venta":"arriendo"} publicados en Finca Raíz y Metrocuadrado (datos del ${META.actualizado}), del mismo tipo de inmueble, área entre 60% y 160% de la evaluada, ubicados en ${s.barrio} y su entorno, priorizando estrato, área, habitaciones, parqueaderos y antigüedad similares. Se descartan valores atípicos y se usa la mediana ponderada del precio por m². "Alto" o "bajo" indica más de 10% de diferencia frente a esa mediana. Este informe es una referencia de mercado basada en precios de oferta, que suelen ser superiores a los precios de cierre; no constituye un avalúo.`, W-2*M), M, fy);
     return doc;
@@ -380,7 +383,8 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
         <tbody>${rows}</tbody></table></div>
       <p class="note">Método: se toman anuncios de ${s.op==="V"?"venta":"arriendo"} del mismo tipo, área entre 60% y 160% de la del inmueble, en el barrio y su entorno, priorizando el mismo estrato, área, habitaciones, parqueaderos y antigüedad. Se descartan valores atípicos y se usa la mediana ponderada del precio por m². "Alto" o "bajo" significa más de 10% de diferencia con esa mediana. Los precios de anuncio suelen estar por encima del precio final de cierre.</p>`;
     lastText = [
-      `INFORME DE PRECIO · ${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} estrato ${s.estrato}`,
+      `TERMÓMETRO INMOBILIARIO COOL HOUSE · ${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} estrato ${s.estrato}`,
+      `Como parte del servicio integral que ofrecemos a nuestros clientes, le enviamos una estimación del valor de mercado basada en el precio por metro cuadrado.`,
       `${s.barrio}, Bogotá · ${s.area} m² · ${s.hab} hab · ${s.banos} baños · ${s.gar} parq${s.ant?` · ${ANT[s.ant]}`:""}`,
       `Precio consultado: ${cop(s.precio)}${unit} (${cop(user)}/m²)`,
       `Resultado: ${word.toUpperCase()} — ${lead}`,
