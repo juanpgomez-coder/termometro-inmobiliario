@@ -78,6 +78,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 .seg span{display:block;text-align:center;padding:8px;border-radius:9px;color:var(--muted)}
 .seg input:checked+span{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,18,22,.12)}
 .seg input:focus-visible+span{outline:2px solid var(--accent)}
+.err{margin:-4px 0 0;font-size:12px;font-weight:600;color:var(--high)}
+input.bad{border-color:var(--high);box-shadow:0 0 0 3px var(--high-soft)}
 .req{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-left:4px}
 .sig{font-size:12px;color:var(--muted);background:var(--accent-soft);border-radius:10px;padding:9px 12px}
 .sig b{color:var(--ink)}
@@ -225,7 +227,8 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
       <div class="sec">
         <h2><b>3</b>Personaliza el informe</h2>
         <label>Nombre del cliente<input id="cliente" placeholder="Quién recibe el informe"></label>
-        <label>Agente que lo atiende <span class="req">obligatorio</span><input id="agente" placeholder="Tu nombre y apellido" required autocomplete="name"></label>
+        <label>Agente que lo atiende <span class="req">obligatorio</span><input id="agente" placeholder="Tu nombre y apellido" required minlength="3" autocomplete="name" aria-describedby="agente-err"></label>
+        <p class="err" id="agente-err" role="alert" hidden>Escribe tu nombre en “Agente que lo atiende”. Sin él no se puede generar, copiar ni descargar el informe.</p>
         <label>Dirección o referencia del inmueble<input id="referencia" placeholder="Opcional"></label>
         <div class="sig" id="sig">Así firma el informe: <b>Tu nombre · Agente Cool House</b></div>
       </div>
@@ -256,6 +259,12 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
   const millones = n => { const m = n/1e6; return m >= 1000 ? Math.round(m).toLocaleString("en-US") : m.toLocaleString("es-CO",{maximumFractionDigits:1}); };
   const copM = n => n >= 1e6 ? "$" + millones(n) + " millones" : cop(n);
   const parseMoney = s => Number(String(s).replace(/[^\d]/g,"")) || 0;
+  const agenteOk = () => {
+    const ok = $("agente").value.trim().replace(/\s+/g," ").length >= 3;
+    $("agente-err").hidden = ok; $("agente").classList.toggle("bad", !ok);
+    if (!ok){ $("agente").focus(); $("agente").scrollIntoView({behavior:"smooth", block:"center"}); }
+    return ok;
+  };
   const firma = () => `${$("agente").value.trim() || "Equipo Cool House"} · Agente Cool House`;
 
   let ROWS = [], CENTROIDS = {}, META = {}, LOGO = null, lastText = "", LAST = null;
@@ -431,6 +440,8 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
     $("pdf").addEventListener("click", downloadPdf);
     if ($("more")) $("more").addEventListener("click", () => { $("report").classList.add("showall"); $("more").remove(); });
     $("copy").addEventListener("click", async () => {
+      if (!agenteOk()) { $("copied").textContent = "Falta el nombre del agente."; return; }
+      lastText = lastText.replace(/[^\n]*· Agente Cool House$/, firma());
       try { await navigator.clipboard.writeText(lastText); $("copied").textContent = "Texto copiado"; }
       catch { const ta = document.createElement("textarea"); ta.value = lastText; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); $("copied").textContent="Texto copiado";}catch{ $("copied").textContent="Selecciona y copia el texto manualmente"; } ta.remove(); }
     });
@@ -563,7 +574,7 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
   async function downloadPdf(){
     const msg = $("copied");
     if (!window.jspdf || !LAST){ msg.textContent = "No se pudo preparar el PDF. Recarga la página e inténtalo de nuevo."; return; }
-    if (!$("agente").value.trim()){ msg.textContent = "Escribe tu nombre en “Agente que lo atiende” para descargar el informe."; $("agente").focus(); $("agente").scrollIntoView({behavior:"smooth", block:"center"}); return; }
+    if (!agenteOk()){ msg.textContent = "Falta el nombre del agente."; return; }
     registrar("PDF descargado");
     const cli = $("cliente").value.trim();
     const name = `Estimacion de mercado ${cli || LAST.s.barrio} - Cool House.pdf`.replace(/[\\/:*?"<>|]+/g," ");
@@ -587,13 +598,14 @@ footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
   const updateSig = () => { const sig = $("sig"); sig.textContent = "Así firma el informe: "; const b = document.createElement("b"); b.textContent = firma(); sig.appendChild(b); };
   try { $("agente").value = localStorage.getItem("tm-agente") || ""; } catch {}
   updateSig();
-  $("agente").addEventListener("input", () => { updateSig(); try { localStorage.setItem("tm-agente", $("agente").value.trim()); } catch {} });
+  $("agente").addEventListener("input", () => { if ($("agente").value.trim().length >= 3){ $("agente-err").hidden = true; $("agente").classList.remove("bad"); } updateSig(); try { localStorage.setItem("tm-agente", $("agente").value.trim()); } catch {} });
   $("precio").addEventListener("input", e => { const n = parseMoney(e.target.value); e.target.value = n ? n.toLocaleString("es-CO") : ""; });
   document.querySelectorAll('input[name="op"]').forEach(r => r.addEventListener("change", () => {
     $("precio-label").textContent = $("op-a").checked ? "Canon mensual consultado (COP)" : "Precio consultado (COP)";
   }));
   $("form").addEventListener("submit", e => {
     e.preventDefault();
+    if (!agenteOk()) return;
     const s = readForm();
     if (!s.barrio || !s.area || !s.precio) return;
     render(s, false);
