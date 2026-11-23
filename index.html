@@ -3,123 +3,156 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Valora en segundos si el precio de un inmueble de estrato 5 o 6 en Bogotá está alto, en rango o bajo frente a los anuncios de Finca Raíz y Metrocuadrado.">
+<meta name="description" content="Termómetro Inmobiliario Cool House: estimación del valor de mercado por metro cuadrado para inmuebles de estrato 5 y 6 en Bogotá.">
 <title>Termómetro Inmobiliario Cool House</title>
 <link rel="icon" href="img/logo-cool-house.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700;800&family=Inter:wght@400;500;600&display=swap">
 <style>
-:root{color-scheme:light}html{-webkit-text-size-adjust:100%}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
-/* Layout: white brand bar with the Cool House logo, then form column + report; stacks on phones.
-   Palette from the logo: black "COOL", blue gradient "HOUSE" (sky #5b9bd5 to indigo #4652a0). */
+/* Layout: white brand bar · dark hero band with title · form card overlapping the band beside the report card.
+   Palette from the Cool House logo: black "COOL", sky-to-indigo "HOUSE". No greens: "en rango" is a friendly blue. */
 :root{
-  --bg:#f3f5f9; --surface:#ffffff; --ink:#111418; --muted:#5c6575; --line:#dde2ec;
-  --accent:#3e6db5; --accent-2:#4652a0; --accent-sky:#5b9bd5; --accent-soft:#e7eef9;
-  --high:#b4372b; --high-soft:#f8e4e1; --low:#9a6a12; --low-soft:#f6eddb; --ok:#2c7a3f; --ok-soft:#e2f1e5;
+  color-scheme:light;
+  --bg:#f2f5fa; --surface:#ffffff; --ink:#0f1216; --muted:#5d6676; --line:#e1e6ef; --field:#f6f8fc;
+  --sky:#5b9bd5; --indigo:#4652a0; --accent:#3d6bb3; --accent-soft:#e8eff9;
+  --hero:#0f1216; --hero-ink:#ffffff; --hero-muted:#aab4c6;
+  --high:#c0392b; --high-soft:#fbe9e7; --low:#c27c0e; --low-soft:#fcf1dc; --ok:#2f86d6; --ok-soft:#e6f1fc;
+  --shadow:0 1px 2px rgba(15,18,22,.05),0 12px 32px -12px rgba(15,18,22,.18);
   --font-display:"Montserrat",system-ui,sans-serif; --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0d1016; --surface:#161b24; --ink:#eceff5; --muted:#9aa3b3; --line:#283040;
-  --accent:#7da7e6; --accent-2:#8f9ae0; --accent-sky:#7fb6e8; --accent-soft:#1b2740;
-  --high:#f07c6e; --high-soft:#3b1f1c; --low:#e0b45c; --low-soft:#3a2e15; --ok:#7bcf8d; --ok-soft:#18321f; color-scheme:dark}}
+  --bg:#0b0d12; --surface:#141922; --ink:#eef1f6; --muted:#9aa4b5; --line:#262e3c; --field:#0f131a;
+  --accent:#86aef0; --accent-soft:#1a2640; --hero:#05070a;
+  --high:#f08273; --high-soft:#3a1d1a; --low:#e9b45a; --low-soft:#3a2d14; --ok:#7fb8f0; --ok-soft:#13283f;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0d1016; --surface:#161b24; --ink:#eceff5; --muted:#9aa3b3; --line:#283040;
-  --accent:#7da7e6; --accent-2:#8f9ae0; --accent-sky:#7fb6e8; --accent-soft:#1b2740;
-  --high:#f07c6e; --high-soft:#3b1f1c; --low:#e0b45c; --low-soft:#3a2e15; --ok:#7bcf8d; --ok-soft:#18321f; color-scheme:dark}
-.brandbar{background:#ffffff;border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#5b9bd5,#4652a0) 1}
-.brandbar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.brandbar img{height:46px;width:auto;display:block}
-.brandbar .tagline{font-family:var(--font-display);font-weight:500;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#4652a0}
-@media (max-width:520px){.brandbar .tagline{display:none}.brandbar img{height:40px}}
+  --bg:#0b0d12; --surface:#141922; --ink:#eef1f6; --muted:#9aa4b5; --line:#262e3c; --field:#0f131a;
+  --accent:#86aef0; --accent-soft:#1a2640; --hero:#05070a;
+  --high:#f08273; --high-soft:#3a1d1a; --low:#e9b45a; --low-soft:#3a2d14; --ok:#7fb8f0; --ok-soft:#13283f;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.6); color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5}
-.wrap{max-width:1180px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px;margin-bottom:22px}
-h1{font-family:var(--font-display);font-weight:800;font-size:28px;margin:0;letter-spacing:-.01em;text-wrap:balance}
-.sub{color:var(--muted);margin:4px 0 0;max-width:62ch}
-.meta{font-size:13px;color:var(--muted);text-align:right}
-.grid{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}.meta{text-align:left}}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
-.panel h2{font-family:var(--font-display);font-size:16px;margin:0 0 14px}
-form{display:grid;gap:12px}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5}
+img{max-width:100%}
+[hidden]{display:none!important}
+.gutter{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.inner{max-width:1200px;margin:0 auto}
+
+/* brand bar */
+.brandbar{background:#fff;position:relative}
+.brandbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--indigo))}
+.brandbar .inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px 17px}
+.brandbar img{height:50px;width:auto;display:block}
+.brandbar .tag{font-family:var(--font-display);font-weight:500;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--indigo)}
+@media (max-width:520px){.brandbar .tag{display:none}.brandbar img{height:42px}}
+
+/* hero */
+.hero{background:var(--hero);color:var(--hero-ink);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:auto -10% -60% 40%;height:140%;background:radial-gradient(closest-side,rgba(91,155,213,.35),rgba(70,82,160,.18) 55%,transparent);pointer-events:none}
+.hero .inner{position:relative;padding-block:44px 120px;display:grid;gap:14px}
+.eyebrow{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--sky)}
+h1{font-family:var(--font-display);font-weight:800;font-size:clamp(28px,4.4vw,46px);line-height:1.05;margin:0;letter-spacing:-.02em;text-wrap:balance}
+h1 span{display:block;font-weight:300;letter-spacing:.32em;font-size:.42em;margin-top:10px;background:linear-gradient(90deg,var(--sky),#8e99e6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:0;max-width:60ch;color:var(--hero-muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{font-size:12px;color:#dfe5f0;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);padding:5px 11px;border-radius:999px;font-variant-numeric:tabular-nums}
+
+/* main grid */
+main .inner{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px;align-items:start;margin-top:-84px;padding-bottom:56px;position:relative}
+@media (max-width:900px){main .inner{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.formcard{padding:24px}
+.sec{display:grid;gap:12px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+.sec:last-of-type{border-bottom:0;margin-bottom:6px;padding-bottom:0}
+.sec h2{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 2px}
+.sec h2 b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:11px;color:#fff;background:linear-gradient(135deg,var(--sky),var(--indigo))}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-label{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
-input,select{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
-input:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+label{display:grid;gap:5px;font-size:12px;font-weight:600;color:var(--muted)}
+input,select{font:inherit;font-size:15px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.seg label{position:relative;display:block;cursor:pointer;color:var(--ink);font-size:14px;font-weight:600}
 .seg input{position:absolute;opacity:0;pointer-events:none}
-.seg label{display:block;position:relative;text-align:center;padding:0;font-size:14px;color:var(--ink);cursor:pointer;font-weight:500;letter-spacing:0}
-.seg span{display:block;padding:9px}
-.seg input:checked+span{background:var(--accent);color:var(--surface);font-weight:600}
-.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-3px}
-.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:11px 14px;background:var(--accent);background-image:linear-gradient(90deg,var(--accent),var(--accent-2));color:var(--surface);cursor:pointer}
-.btn.ghost{background-image:none}
-.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.seg span{display:block;text-align:center;padding:8px;border-radius:9px;color:var(--muted)}
+.seg input:checked+span{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,18,22,.12)}
+.seg input:focus-visible+span{outline:2px solid var(--accent)}
+.sig{font-size:12px;color:var(--muted);background:var(--accent-soft);border-radius:10px;padding:9px 12px}
+.sig b{color:var(--ink)}
+.btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;color:#fff;background:linear-gradient(90deg,var(--sky),var(--indigo));cursor:pointer;box-shadow:0 8px 20px -8px rgba(70,82,160,.6);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px -10px rgba(70,82,160,.7)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
 .hint{font-size:12px;color:var(--muted);margin:0}
-.verdict{display:grid;gap:6px;padding:20px;border-radius:12px;margin-bottom:16px}
-.verdict.alto{background:var(--high-soft)} .verdict.bajo{background:var(--low-soft)} .verdict.ok{background:var(--ok-soft)} .verdict.na{background:var(--accent-soft)}
-.tag{justify-self:start;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;color:var(--surface)}
-.alto .tag{background:var(--high)} .bajo .tag{background:var(--low)} .ok .tag{background:var(--ok)} .na .tag{background:var(--muted)}
-.verdict h3{font-family:var(--font-display);font-size:24px;margin:4px 0 0;text-wrap:balance}
-.verdict p{margin:0;color:var(--ink)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
-.stat{background:var(--surface);padding:14px 16px}
-.stat .k{font-size:12px;color:var(--muted);font-weight:600}
-.stat .v{font-family:var(--font-display);font-weight:700;font-size:19px;font-variant-numeric:tabular-nums;margin-top:2px}
+
+/* report */
+.report{padding:28px;display:grid;gap:22px;min-width:0}
+.rhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 20px;align-items:baseline}
+.rhead .who{font-size:13px;color:var(--muted)}
+.rhead .who b{color:var(--ink);font-weight:600}
+.example{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:999px}
+.verdict{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:24px;align-items:center;padding:22px;border-radius:16px}
+@media (max-width:640px){.verdict{grid-template-columns:minmax(0,1fr)}}
+.verdict.alto{background:var(--high-soft)} .verdict.bajo{background:var(--low-soft)} .verdict.ok{background:var(--ok-soft)}
+.gauge svg{width:100%;height:auto;display:block}
+.pill{justify-self:start;display:inline-block;font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;border-radius:999px;color:#fff}
+.alto .pill{background:var(--high)} .bajo .pill{background:var(--low)} .ok .pill{background:var(--ok)}
+.vtext{display:grid;gap:8px}
+.vtext h3{font-family:var(--font-display);font-size:clamp(20px,2.4vw,26px);font-weight:700;line-height:1.2;margin:0;text-wrap:balance}
+.vtext p{margin:0}
+.range{font-family:var(--font-display);font-weight:700;font-size:17px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--surface)}
+.stat .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stat .v{font-family:var(--font-display);font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;margin-top:4px;letter-spacing:-.01em}
 .stat .s{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.chart{margin:4px 0 18px}
+.block h4{font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 10px}
 .chart svg{width:100%;height:auto;display:block}
-.chart .cap{font-size:12px;color:var(--muted)}
-.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.cap{font-size:12px;color:var(--muted);margin:4px 0 0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
 table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
-th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg);font-weight:600}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--field);font-weight:600}
 th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
 tr:last-child td{border-bottom:0}
 td a{color:var(--accent);text-decoration:none;font-weight:600}
-.src{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
-.actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
-.note{font-size:12px;color:var(--muted);margin-top:14px;max-width:75ch}
-.example{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:3px 8px;border-radius:6px;justify-self:start}
-.empty{color:var(--muted);padding:30px 4px}
-@media (prefers-reduced-motion:no-preference){.verdict,.stats{transition:background .2s}}
+.src{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.disc{margin:0;font-size:13px;color:var(--ink);background:var(--accent-soft);border-radius:14px;padding:14px 16px;border-left:4px solid var(--accent)}
+.note{font-size:12px;color:var(--muted);margin:0;max-width:80ch}
+.empty{color:var(--muted);padding:40px 6px}
+footer{color:var(--muted);font-size:12px;padding-block:0 32px}
+footer .inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:18px}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover{transform:none}}
 </style>
 </head>
 <body>
-<div class="brandbar"><div class="in">
+<div class="brandbar gutter"><div class="inner">
   <img src="img/logo-cool-house.png" alt="Cool House" width="240" height="124">
-  <span class="tagline">Inmobiliaria · Bogotá</span>
+  <span class="tag">Inmobiliaria · Bogotá</span>
 </div></div>
-<div class="wrap">
-  <header>
-    <div>
-      <h1>Termómetro Inmobiliario Cool House</h1>
-      <p class="sub">Ingresa los datos del inmueble y el precio que te consultan. El informe lo compara con anuncios publicados en Finca Raíz y Metrocuadrado de barrios estrato 5 y 6 de Bogotá.</p>
-    </div>
-    <div class="meta" id="meta">Cargando datos del mercado…</div>
-  </header>
 
-  <div class="grid">
-    <section class="panel" aria-labelledby="f-title">
-      <h2 id="f-title">Datos del inmueble</h2>
-      <form id="form" autocomplete="off">
+<section class="hero gutter"><div class="inner">
+  <span class="eyebrow">Herramienta para agentes</span>
+  <h1>Termómetro Inmobiliario<span>COOL HOUSE</span></h1>
+  <p>Estimación del valor de mercado por metro cuadrado para inmuebles de estrato 5 y 6 en Bogotá, comparada con anuncios publicados en Finca Raíz y Metrocuadrado.</p>
+  <div class="chips" id="chips"><span class="chip">Cargando datos del mercado…</span></div>
+</div></section>
+
+<main class="gutter"><div class="inner">
+  <section class="card formcard" aria-label="Datos del inmueble">
+    <form id="form" autocomplete="off">
+      <div class="sec">
+        <h2><b>1</b>El inmueble</h2>
         <div class="seg" role="radiogroup" aria-label="Operación">
           <label><input type="radio" name="op" id="op-v" value="V" checked><span>Venta</span></label>
           <label><input type="radio" name="op" id="op-a" value="A"><span>Arriendo</span></label>
         </div>
         <div class="row2">
-          <label>Tipo
-            <select id="tipo"><option value="Apartamento">Apartamento</option><option value="Casa">Casa</option></select>
-          </label>
-          <label>Estrato
-            <select id="estrato"><option value="6">6</option><option value="5">5</option></select>
-          </label>
+          <label>Tipo<select id="tipo"><option value="Apartamento">Apartamento</option><option value="Casa">Casa</option></select></label>
+          <label>Estrato<select id="estrato"><option value="6">6</option><option value="5">5</option></select></label>
         </div>
-        <label>Barrio
-          <input id="barrio" list="barrios" placeholder="Ej. Rosales, Chicó Navarra, Santa Bárbara" required>
-          <datalist id="barrios"></datalist>
-        </label>
+        <label>Barrio<input id="barrio" list="barrios" placeholder="Ej. Rosales, Chicó Navarra" required><datalist id="barrios"></datalist></label>
         <div class="row2">
           <label>Área construida (m²)<input id="area" type="number" min="15" max="2000" step="1" required></label>
           <label>Habitaciones<input id="hab" type="number" min="0" max="10" step="1" value="3"></label>
@@ -130,32 +163,36 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
         </div>
         <label>Antigüedad
           <select id="antig">
-            <option value="">No sé</option>
-            <option value="1">Menos de 1 año</option>
-            <option value="2">1 a 8 años</option>
-            <option value="3">9 a 15 años</option>
-            <option value="4">16 a 30 años</option>
-            <option value="5">Más de 30 años</option>
+            <option value="">No sé</option><option value="1">Menos de 1 año</option><option value="2">1 a 8 años</option>
+            <option value="3">9 a 15 años</option><option value="4">16 a 30 años</option><option value="5">Más de 30 años</option>
           </select>
         </label>
-        <label><span id="precio-label">Precio consultado (COP)</span>
-          <input id="precio" inputmode="numeric" placeholder="Ej. 1.250.000.000" required>
-        </label>
-        <div class="row2">
-          <label>Preparado por (agente)<input id="agente" placeholder="Tu nombre"></label>
-          <label>Para (propietario)<input id="propietario" placeholder="Opcional"></label>
-        </div>
-        <label>Dirección o referencia del inmueble<input id="referencia" placeholder="Opcional, sale en el PDF"></label>
-        <button class="btn" type="submit">Generar informe</button>
-        <p class="hint">El precio no incluye administración. En arriendo, ingresa el canon mensual.</p>
-      </form>
-    </section>
+      </div>
+      <div class="sec">
+        <h2><b>2</b>El precio</h2>
+        <label><span id="precio-label">Precio consultado (COP)</span><input id="precio" inputmode="numeric" placeholder="Ej. 1.250.000.000" required></label>
+        <p class="hint">Sin administración. En arriendo, el canon mensual.</p>
+      </div>
+      <div class="sec">
+        <h2><b>3</b>Personaliza el informe</h2>
+        <label>Nombre del cliente<input id="cliente" placeholder="Quién recibe el informe"></label>
+        <label>Agente que lo atiende<input id="agente" placeholder="Tu nombre"></label>
+        <label>Dirección o referencia del inmueble<input id="referencia" placeholder="Opcional"></label>
+        <div class="sig" id="sig">Así firma el informe: <b>Tu nombre · Agente Cool House</b></div>
+      </div>
+      <button class="btn" type="submit">Generar informe</button>
+    </form>
+  </section>
 
-    <section class="panel" id="report" aria-live="polite">
-      <p class="empty">Cargando anuncios del mercado…</p>
-    </section>
-  </div>
-</div>
+  <section class="card report" id="report" aria-live="polite">
+    <p class="empty">Cargando anuncios del mercado…</p>
+  </section>
+</div></main>
+
+<footer class="gutter"><div class="inner">
+  <span>Termómetro Inmobiliario Cool House</span>
+  <span id="foot">Fuentes: Finca Raíz y Metrocuadrado</span>
+</div></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -166,13 +203,15 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
   const cop = n => "$" + Math.round(n).toLocaleString("es-CO");
-  // Millions as the agents say them: 1380000000 -> "$1,380 millones", 5700000 -> "$5,7 millones"
+  // Millions as agents say them: 1380000000 -> "$1,380 millones", 5700000 -> "$5,7 millones"
   const millones = n => { const m = n/1e6; return m >= 1000 ? Math.round(m).toLocaleString("en-US") : m.toLocaleString("es-CO",{maximumFractionDigits:1}); };
   const copM = n => n >= 1e6 ? "$" + millones(n) + " millones" : cop(n);
   const parseMoney = s => Number(String(s).replace(/[^\d]/g,"")) || 0;
+  const firma = () => `${$("agente").value.trim() || "Equipo Cool House"} · Agente Cool House`;
 
-  let ROWS = [], CENTROIDS = {}, META = {};
-  // Row: [portal, op, tipo, estrato, barrio, precio, m2, hab, banos, garajes, antig, admin, lat, lng, url, fecha]
+  let ROWS = [], CENTROIDS = {}, META = {}, LOGO = null, lastText = "", LAST = null;
+
+  // Row: [portal, op, tipo, estrato, barrio, precio, m2, hab, banos, garajes, antig, admin, lat, lng, id]
   function prep(data){
     META = data;
     ROWS = data.rows.map(r => ({portal:r[0], op:r[1], tipo:(r[2]==="C"||/casa/i.test(r[2]))?"Casa":"Apartamento", estrato:r[3], barrio:r[4], nb:norm(r[4]),
@@ -181,19 +220,21 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
       .filter(r => r.m2 >= 20 && r.precio > 0 && r.m2 < 3000)
       .map(r => (r.ppm = r.precio / r.m2, r));
     const acc = {};
-    for (const r of ROWS){ if (!r.lat) continue; const a = acc[r.nb] ||= {lat:0,lng:0,n:0,name:r.barrio}; a.lat+=r.lat; a.lng+=r.lng; a.n++; }
-    for (const k in acc){ const a = acc[k]; CENTROIDS[k] = {lat:a.lat/a.n, lng:a.lng/a.n, n:a.n, name:a.name}; }
-    for (const r of ROWS){ if (!r.lat && CENTROIDS[r.nb]){ r.lat = CENTROIDS[r.nb].lat; r.lng = CENTROIDS[r.nb].lng; r.approx = true; } }
+    for (const r of ROWS){ if (!r.lat) continue; const a = acc[r.nb] ||= {lat:0,lng:0,n:0}; a.lat+=r.lat; a.lng+=r.lng; a.n++; }
+    for (const k in acc){ const a = acc[k]; CENTROIDS[k] = {lat:a.lat/a.n, lng:a.lng/a.n, n:a.n}; }
+    for (const r of ROWS){ if (!r.lat && CENTROIDS[r.nb]){ r.lat = CENTROIDS[r.nb].lat; r.lng = CENTROIDS[r.nb].lng; } }
     const counts = {}; for (const r of ROWS){ counts[r.barrio] = (counts[r.barrio]||0)+1; }
     const seen = new Set(); const dl = $("barrios");
     Object.entries(counts).filter(([,n]) => n >= 3).sort((a,b)=>b[1]-a[1]).forEach(([b]) => { const k = norm(b); if (seen.has(k)) return; seen.add(k); const o = document.createElement("option"); o.value = b; dl.appendChild(o); });
-    const fr = ROWS.filter(r=>r.portal==="FR").length, mc = ROWS.filter(r=>r.portal==="MC").length;
-    $("meta").textContent = `${ROWS.length.toLocaleString("es-CO")} anuncios · Finca Raíz ${fr.toLocaleString("es-CO")} · Metrocuadrado ${mc.toLocaleString("es-CO")} · actualizado ${data.actualizado}`;
+    const fr = ROWS.filter(r=>r.portal==="FR").length, mc = ROWS.length - fr;
+    const chips = $("chips"); chips.textContent = "";
+    [`${ROWS.length.toLocaleString("es-CO")} anuncios analizados`, `Finca Raíz ${fr.toLocaleString("es-CO")}`, `Metrocuadrado ${mc.toLocaleString("es-CO")}`, `Actualizado ${data.actualizado}`]
+      .forEach(t => { const s = document.createElement("span"); s.className = "chip"; s.textContent = t; chips.appendChild(s); });
+    $("foot").textContent = `Fuentes: Finca Raíz y Metrocuadrado · datos del ${data.actualizado}`;
   }
 
   const km = (a,b) => { const R=6371, dLa=(b.lat-a.lat)*Math.PI/180, dLo=(b.lng-a.lng)*Math.PI/180; const x=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(x)); };
   const q = (arr,p) => { const s=[...arr].sort((a,b)=>a-b); const i=(s.length-1)*p, lo=Math.floor(i), hi=Math.ceil(i); return s[lo]+(s[hi]-s[lo])*(i-lo); };
-
   function findCenter(nb){
     if (CENTROIDS[nb]) return CENTROIDS[nb];
     const keys = Object.keys(CENTROIDS).filter(k => k.includes(nb) || nb.includes(k)).sort((a,b)=>CENTROIDS[b].n-CENTROIDS[a].n);
@@ -211,131 +252,248 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
       if (sameStr.length >= 12) { picked = sameStr; break; }
       if (picked.length >= 15) break;
     }
-    if (!picked.length) return {n:0, center};
+    if (!picked.length) return {n:0};
     const scored = picked.map(r => {
       const d = center && r.lat ? km(center,r) : (r.nb===nb?0:1.5);
-      const sameB = r.nb===nb ? 0 : 0.4;
-      const pen = d/0.8 + Math.abs(Math.log(r.m2/s.area))*3 + Math.abs((r.hab??s.hab)-s.hab)*0.25 + Math.abs((r.gar??s.gar)-s.gar)*0.25 + (s.ant&&r.ant?Math.abs(r.ant-s.ant)*0.2:0) + (r.estrato===s.estrato?0:0.5) + sameB;
-      return {...r, d, w:1/(1+pen)};
+      const pen = d/0.8 + Math.abs(Math.log(r.m2/s.area))*3 + Math.abs((r.hab??s.hab)-s.hab)*0.25 + Math.abs((r.gar??s.gar)-s.gar)*0.25 + (s.ant&&r.ant?Math.abs(r.ant-s.ant)*0.2:0) + (r.estrato===s.estrato?0:0.5) + (r.nb===nb?0:0.4);
+      return {...r, w:1/(1+pen)};
     }).sort((a,b)=>b.w-a.w);
-    // dedupe same listing published on both portals (same price and area in same barrio)
     const uniq = []; const keys = new Set();
     for (const r of scored){ const k = r.nb+"|"+Math.round(r.precio/1e6)+"|"+Math.round(r.m2); if (keys.has(k)) continue; keys.add(k); uniq.push(r); }
     let comps = uniq.slice(0, 30);
     const ppms = comps.map(c=>c.ppm), q1=q(ppms,.25), q3=q(ppms,.75), iqr=q3-q1;
     comps = comps.filter(c => c.ppm >= q1-1.5*iqr && c.ppm <= q3+1.5*iqr);
-    // weighted median
     const sorted = [...comps].sort((a,b)=>a.ppm-b.ppm); const tw = sorted.reduce((t,c)=>t+c.w,0); let acc=0, med=sorted[0].ppm;
     for (const c of sorted){ acc+=c.w; if (acc>=tw/2){ med=c.ppm; break; } }
-    const p25 = q(comps.map(c=>c.ppm),.25), p75 = q(comps.map(c=>c.ppm),.75), p10=q(comps.map(c=>c.ppm),.1), p90=q(comps.map(c=>c.ppm),.9);
-    const spread = (p75-p25)/med;
+    const v = comps.map(c=>c.ppm);
+    const p25=q(v,.25), p75=q(v,.75), spread=(p75-p25)/med;
     const conf = comps.length>=15 && spread<0.3 ? "Alta" : comps.length>=8 ? "Media" : "Baja";
-    return {n:comps.length, comps, med, p25, p75, p10, p90, conf, radius, center, spread};
+    return {n:comps.length, comps, med, p25, p75, conf, radius};
+  }
+
+  // ---------- gauge (thermometer dial): -30% … +30% versus market median ----------
+  function gaugeSVG(diff){
+    const W=260,H=150,cx=130,cy=132,r=104,sw=20;
+    const ang = d => Math.PI*(1 - (Math.max(-.3,Math.min(.3,d))+.3)/.6);
+    const pt = (a,rr) => [cx+rr*Math.cos(a), cy-rr*Math.sin(a)];
+    const arc = (d0,d1,col) => { const [x0,y0]=pt(ang(d0),r), [x1,y1]=pt(ang(d1),r); return `<path d="M${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${sw}"/>`; };
+    const [nx,ny] = pt(ang(diff), r-28);
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Medidor: el precio está ${Math.round(diff*100)}% frente a la mediana">
+      ${arc(-.3,-.1,"var(--low)")}${arc(-.1,.1,"var(--ok)")}${arc(.1,.3,"var(--high)")}
+      <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="9" fill="var(--ink)"/>
+      <text x="${cx-r}" y="${H-1}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)">Bajo</text>
+      <text x="${cx+r}" y="${H-1}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)">Alto</text>
+      <text x="${cx}" y="${cy-r-sw/2-6}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)">En rango</text>
+    </svg>`;
   }
 
   function strip(v, s){
-    const W=640,H=120,P=24; const vals=v.comps.map(c=>c.ppm); const user=s.precio/s.area;
+    const W=640,H=118,P=26; const vals=v.comps.map(c=>c.ppm); const user=s.precio/s.area;
     let lo=Math.min(...vals,user), hi=Math.max(...vals,user); const pad=(hi-lo)*0.08||hi*0.05; lo-=pad; hi+=pad;
     const x = val => P + (val-lo)/(hi-lo)*(W-2*P);
-    const fmt = n => copM(n);
-    let g = `<rect x="${x(v.p25)}" y="34" width="${Math.max(2,x(v.p75)-x(v.p25))}" height="44" rx="6" fill="var(--ok-soft)"/>`;
-    g += v.comps.map((c,i)=>`<circle cx="${x(c.ppm).toFixed(1)}" cy="${48+((i*37)%18)}" r="4" fill="var(--accent)" fill-opacity=".55"><title>${esc(c.barrio)} · ${esc(fmt(c.ppm))}/m²</title></circle>`).join("");
-    g += `<line x1="${x(v.med)}" x2="${x(v.med)}" y1="28" y2="84" stroke="var(--ok)" stroke-width="2"/>`;
-    g += `<text x="${x(v.med)}" y="22" text-anchor="middle" font-size="11" fill="var(--ok)" font-weight="600">Mediana ${esc(fmt(v.med))}</text>`;
     const col = user > v.med*1.1 ? "var(--high)" : user < v.med*0.9 ? "var(--low)" : "var(--ok)";
-    g += `<path d="M${x(user)-7},100 L${x(user)+7},100 L${x(user)},88 Z" fill="${col}"/>`;
-    const ux = Math.min(W-60, Math.max(60, x(user)));
-    g += `<text x="${ux}" y="116" text-anchor="middle" font-size="11" fill="${col}" font-weight="700">Consultado ${esc(fmt(user))}</text>`;
-    g += `<line x1="${P}" x2="${W-P}" y1="84" y2="84" stroke="var(--line)"/>`;
-    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribución del precio por metro cuadrado de los comparables">${g}</svg>`;
+    let g = `<rect x="${x(v.p25).toFixed(1)}" y="30" width="${Math.max(2,x(v.p75)-x(v.p25)).toFixed(1)}" height="50" rx="10" fill="var(--accent-soft)"/>`;
+    g += `<line x1="${P}" x2="${W-P}" y1="80" y2="80" stroke="var(--line)"/>`;
+    g += v.comps.map((c,i)=>`<circle cx="${x(c.ppm).toFixed(1)}" cy="${44+((i*37)%24)}" r="4.5" fill="var(--accent)" fill-opacity=".7"><title>${esc(c.barrio)} · ${esc(copM(c.ppm))}/m²</title></circle>`).join("");
+    g += `<line x1="${x(v.med).toFixed(1)}" x2="${x(v.med).toFixed(1)}" y1="24" y2="84" stroke="var(--indigo)" stroke-width="2" stroke-dasharray="4 3"/>`;
+    g += `<text x="${Math.min(W-70,Math.max(70,x(v.med))).toFixed(1)}" y="17" text-anchor="middle" font-size="11" fill="var(--muted)" font-weight="600">Mediana ${esc(copM(v.med))}/m²</text>`;
+    g += `<path d="M${x(user)-7},98 L${x(user)+7},98 L${x(user)},86 Z" fill="${col}"/>`;
+    g += `<text x="${Math.min(W-80,Math.max(80,x(user))).toFixed(1)}" y="114" text-anchor="middle" font-size="11" fill="${col}" font-weight="700">Este inmueble ${esc(copM(user))}/m²</text>`;
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Precio por m² de los comparables">${g}</svg>`;
   }
 
-  let lastText = "", LAST = null;
+  function render(s, isExample){
+    const el = $("report");
+    const v = valuate(s);
+    if (!v.n){ el.innerHTML = `<p class="empty">No encontré anuncios comparables para <b>${esc(s.barrio)}</b> con esas características. Elige el barrio de la lista o revisa el área.</p>`; return; }
+    const user = s.precio/s.area, diff = (user - v.med)/v.med;
+    const cls = diff > 0.10 ? "alto" : diff < -0.10 ? "bajo" : "ok";
+    const word = {alto:"Precio alto", bajo:"Precio bajo", ok:"Precio en rango"}[cls];
+    const est = v.med*s.area, lo = v.p25*s.area, hi = v.p75*s.area;
+    const unit = s.op==="V" ? "" : " /mes";
+    const pct = Math.round(Math.abs(diff)*100);
+    const lead = cls==="ok" ? `Está a ${pct}% de la mediana del mercado comparable.` : `Está ${pct}% ${cls==="alto"?"por encima":"por debajo"} de la mediana del mercado comparable.`;
+    const zona = `${esc(s.barrio)} y alrededores (hasta ${String(v.radius).replace(".",",")} km)`;
+    const cliente = $("cliente").value.trim();
+    const rows = v.comps.slice(0,15).map(c => `<tr><td>${esc(c.barrio)}</td><td><span class="src">${c.portal==="FR"?"Finca Raíz":"Metrocuadrado"}</span></td><td>${copM(c.precio)}</td><td>${Math.round(c.m2)}</td><td>${copM(c.ppm)}</td><td>${c.hab??"–"}</td><td>${c.gar??"–"}</td><td>${c.estrato??"–"}</td><td>${/^https:\/\//.test(c.url)?`<a href="${esc(c.url)}" target="_blank" rel="noopener">Ver</a>`:"–"}</td></tr>`).join("");
+    el.innerHTML = `
+      <div class="rhead">
+        <div class="who">${cliente?`Informe para <b>${esc(cliente)}</b> · `:""}<b>${esc(firma())}</b></div>
+        ${isExample?'<span class="example">Ejemplo · cambia los datos</span>':''}
+      </div>
+      <div class="verdict ${cls}">
+        <div class="gauge">${gaugeSVG(diff)}</div>
+        <div class="vtext">
+          <span class="pill">${word}</span>
+          <h3>${copM(s.precio)}${unit} · ${s.area} m² en ${esc(s.barrio)}</h3>
+          <p>${lead}</p>
+          <p>Rango de precio sugerido<br><span class="range">${copM(lo)} – ${copM(hi)}${unit}</span></p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Este inmueble por m²</div><div class="v">${copM(user)}</div><div class="s">${unit?"canon mensual":"precio de venta"}</div></div>
+        <div class="stat"><div class="k">Mediana del mercado por m²</div><div class="v">${copM(v.med)}</div><div class="s">típico ${copM(v.p25)} – ${copM(v.p75)}</div></div>
+        <div class="stat"><div class="k">Valor estimado</div><div class="v">${copM(est)}${unit}</div><div class="s">${s.area} m² × mediana</div></div>
+        <div class="stat"><div class="k">Comparables</div><div class="v">${v.n}</div><div class="s">confianza ${v.conf.toLowerCase()}</div></div>
+      </div>
+      <div class="block chart"><h4>Dónde queda frente al mercado</h4>${strip(v,s)}<p class="cap">Cada punto es un anuncio comparable. La franja es el rango típico (50% central).</p></div>
+      <div class="actions"><button class="btn" id="pdf" type="button">Descargar informe PDF</button><button class="btn ghost" id="copy" type="button">Copiar texto</button><span class="hint" id="copied" role="status"></span></div>
+      <div class="block"><h4>Anuncios comparables · ${zona}</h4>
+        <div class="tablebox"><table>
+          <thead><tr><th>Barrio</th><th>Portal</th><th>${s.op==="V"?"Precio":"Canon"}</th><th>m²</th><th>Por m²</th><th>Hab</th><th>Parq</th><th>Estr</th><th></th></tr></thead>
+          <tbody>${rows}</tbody></table></div></div>
+      <p class="disc">Esta es una estimación que parte del precio por metro cuadrado. La valoración de elementos subjetivos que puedan aumentar o disminuir el precio (estado y acabados, vista, piso, iluminación, remodelaciones, entre otros) queda a criterio del propietario, con la asesoría y la experiencia de su agente Cool House.</p>
+      <p class="note">Método: anuncios de ${s.op==="V"?"venta":"arriendo"} del mismo tipo, con área entre 60% y 160% de la del inmueble, en el barrio y su entorno, priorizando estrato, área, habitaciones, parqueaderos y antigüedad similares. Se descartan valores atípicos y se usa la mediana ponderada del precio por m². "Alto" o "bajo" indica más de 10% de diferencia. Los precios de anuncio suelen estar por encima del precio de cierre.</p>`;
+    LAST = {s, v, cls, word, lead, est, lo, hi, unit, user, diff};
+    lastText = [
+      `TERMÓMETRO INMOBILIARIO COOL HOUSE`,
+      cliente ? `Para: ${cliente}` : null,
+      `Como parte del servicio integral que ofrecemos a nuestros clientes, le enviamos una estimación del valor de mercado, basada en el precio por metro cuadrado de inmuebles comparables publicados actualmente en los principales portales inmobiliarios.`,
+      `${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} estrato ${s.estrato} · ${s.barrio}, Bogotá · ${s.area} m² · ${s.hab} hab · ${s.banos} baños · ${s.gar} parq${s.ant?` · ${ANT[s.ant]}`:""}`,
+      `Precio evaluado: ${cop(s.precio)}${unit} (${cop(user)}/m²)`,
+      `Resultado: ${word.toUpperCase()}. ${lead}`,
+      `Mediana del mercado: ${cop(v.med)}/m² · rango sugerido ${copM(lo)} a ${copM(hi)}${unit}`,
+      `Base: ${v.n} anuncios comparables de Finca Raíz y Metrocuadrado (datos del ${META.actualizado}).`,
+      `Esta es una estimación que parte del precio por metro cuadrado. La valoración de elementos subjetivos que puedan aumentar o disminuir el precio (estado y acabados, vista, piso, iluminación, remodelaciones, entre otros) queda a criterio del propietario, con la asesoría y la experiencia de su agente Cool House.`,
+      firma()
+    ].filter(Boolean).join("\n");
+    $("pdf").addEventListener("click", downloadPdf);
+    $("copy").addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(lastText); $("copied").textContent = "Texto copiado"; }
+      catch { const ta = document.createElement("textarea"); ta.value = lastText; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); $("copied").textContent="Texto copiado";}catch{ $("copied").textContent="Selecciona y copia el texto manualmente"; } ta.remove(); }
+    });
+  }
 
   // ---------- PDF for owners ----------
   const pdfCop = n => "$ " + Math.round(n).toLocaleString("es-CO");
   const pdfM = n => n >= 1e6 ? "$" + millones(n) + " millones" : pdfCop(n);
   function buildPdf(){
-    const {s, v, cls, word, lead, lo, hi, est, unit, user} = LAST;
+    const {s, v, cls, word, lead, lo, hi, est, unit, user, diff} = LAST;
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({unit:"mm", format:"a4"});
-    const W = 210, M = 16;
-    const C = {ink:[17,20,24], muted:[92,101,117], line:[221,226,236], accent:[62,109,181], accent2:[70,82,160], sky:[91,155,213],
-      alto:[180,55,43], bajo:[154,106,18], ok:[44,122,63], altoS:[248,228,225], bajoS:[246,237,219], okS:[226,241,229]};
-    const agente = $("agente").value.trim(), prop = $("propietario").value.trim(), ref = $("referencia").value.trim();
-    const hoy = new Date().toLocaleDateString("es-CO",{day:"numeric",month:"long",year:"numeric"});
-    // header: Cool House logo left, report title right, blue gradient rule below
-    if (LOGO) { try { doc.addImage(LOGO, "PNG", M, 8, 40, 20.7, "logo", "FAST"); } catch {} }
-    doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.setFontSize(16);
-    doc.text("Informe de precio de mercado", W-M, 16, {align:"right"});
-    doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(...C.muted);
-    doc.text(`Termómetro Inmobiliario Cool House · ${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} · Estrato ${s.estrato}`, W-M, 22, {align:"right"});
-    doc.text(hoy, W-M, 27, {align:"right"});
-    for (let i = 0; i < 60; i++){ const t = i/59, c = C.sky.map((v,k)=>Math.round(v+(C.accent2[k]-v)*t)); doc.setFillColor(...c); doc.rect(M + (W-2*M)*i/60, 32, (W-2*M)/60 + 0.2, 1.2, "F"); }
-    let y = 42;
-    doc.setFontSize(10); doc.setTextColor(...C.ink);
-    const intro = `Como parte del servicio integral que ofrecemos a nuestros clientes, le enviamos esta estimación del valor de mercado de su inmueble, basada en el precio por metro cuadrado de inmuebles comparables publicados actualmente en Finca Raíz y Metrocuadrado.`;
-    const introL = doc.splitTextToSize(intro, W-2*M); doc.text(introL, M, y); y += introL.length*4.6 + 5;
-    doc.setTextColor(...C.ink); doc.setFontSize(10);
-    const metaL = [];
-    if (prop) metaL.push(["Para", prop]);
-    if (agente) metaL.push(["Preparado por", agente]);
-    if (ref) metaL.push(["Inmueble", ref]);
-    metaL.push(["Ubicación", `${s.barrio}, Bogotá`]);
-    metaL.push(["Características", `${s.area} m² · ${s.hab} habitaciones · ${s.banos} baños · ${s.gar} parqueaderos${s.ant?` · ${ANT[s.ant]}`:""}`]);
-    metaL.push([s.op==="V"?"Precio evaluado":"Canon evaluado", `${pdfCop(s.precio)}${unit}  (${pdfCop(user)} por m²)`]);
-    for (const [k,val] of metaL){ doc.setFont("helvetica","bold"); doc.setTextColor(...C.muted); doc.text(k, M, y); doc.setFont("helvetica","normal"); doc.setTextColor(...C.ink); doc.text(doc.splitTextToSize(val, W-2*M-42), M+42, y); y += 5.8; }
-    // verdict box
-    y += 3;
+    const W = 210, H = 297, M = 18;
+    const C = {ink:[15,18,22], muted:[93,102,118], line:[225,230,239], field:[246,248,252], sky:[91,155,213], indigo:[70,82,160], accent:[61,107,179], soft:[232,239,249],
+      alto:[192,57,43], bajo:[194,124,14], ok:[47,134,214], altoS:[251,233,231], bajoS:[252,241,220], okS:[230,241,252]};
     const col = C[cls==="ok"?"ok":cls], soft = C[(cls==="ok"?"ok":cls)+"S"];
-    doc.setFillColor(...soft); doc.roundedRect(M, y, W-2*M, 27, 3, 3, "F");
-    doc.setFillColor(...col); doc.roundedRect(M+6, y+6, doc.getTextWidth(word.toUpperCase())*1.15+10, 8, 4, 4, "F");
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.text(word.toUpperCase(), M+11, y+11.6);
-    doc.setTextColor(...C.ink); doc.setFontSize(11); doc.setFont("helvetica","normal");
-    doc.text(doc.splitTextToSize(`${lead} Rango de precio sugerido: ${pdfM(lo)} a ${pdfM(hi)}${unit}.`, W-2*M-12), M+6, y+19.5);
-    y += 33;
-    // stats row
-    const stats = [["Precio por m² evaluado", pdfM(user)], ["Mediana del mercado por m²", pdfM(v.med)], ["Valor estimado", pdfM(est)+unit], ["Anuncios comparables", `${v.n} (confianza ${v.conf.toLowerCase()})`]];
-    const sw = (W-2*M)/4;
-    stats.forEach(([k,val],i) => { const x = M + i*sw; doc.setDrawColor(...C.line); doc.rect(x, y, sw, 18);
-      doc.setFontSize(8); doc.setTextColor(...C.muted); doc.text(doc.splitTextToSize(k, sw-6), x+3, y+5);
-      doc.setFontSize(10.5); doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.text(doc.splitTextToSize(val, sw-6), x+3, y+12.5); doc.setFont("helvetica","normal"); });
-    y += 26;
+    const cliente = $("cliente").value.trim(), ref = $("referencia").value.trim();
+    const hoy = new Date().toLocaleDateString("es-CO",{day:"numeric",month:"long",year:"numeric"});
+    const grad = (x,y,w,h) => { const n=80; for (let i=0;i<n;i++){ const t=i/(n-1), c=C.sky.map((v,k)=>Math.round(v+(C.indigo[k]-v)*t)); doc.setFillColor(...c); doc.rect(x+w*i/n, y, w/n+0.15, h, "F"); } };
+    const label = (t,x,y,opt) => { doc.setFont("helvetica","bold"); doc.setFontSize(7); doc.setTextColor(...C.muted); doc.setCharSpace(0.5); doc.text(t.toUpperCase(), x, y, opt); doc.setCharSpace(0); };
+
+    // header
+    if (LOGO) { try { doc.addImage(LOGO, "PNG", M, 10, 36, 18.6, "logo", "FAST"); } catch {} }
+    label("Termómetro Inmobiliario", W-M, 16, {align:"right"});
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(...C.muted);
+    doc.text(hoy, W-M, 22, {align:"right"});
+    grad(0, 33, W, 1.4);
+
+    // title block
+    let y = 45;
+    doc.setFont("helvetica","bold"); doc.setFontSize(22); doc.setTextColor(...C.ink);
+    doc.text("Estimación del valor de mercado", M, y);
+    y += 8;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(...C.muted);
+    doc.text(`${s.tipo} en ${s.op==="V"?"venta":"arriendo"} · ${s.barrio}, Bogotá · Estrato ${s.estrato}`, M, y);
+    y += 8;
+
+    // client / agent cards
+    const cw = (W-2*M-6)/2;
+    doc.setFillColor(...C.field); doc.roundedRect(M, y, cw, 17, 2.5, 2.5, "F"); doc.roundedRect(M+cw+6, y, cw, 17, 2.5, 2.5, "F");
+    label("Preparado para", M+5, y+6); label("Asesor", M+cw+11, y+6);
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(...C.ink);
+    doc.text(doc.splitTextToSize(cliente || "Propietario", cw-10)[0], M+5, y+12.5);
+    doc.text(doc.splitTextToSize(firma(), cw-10)[0], M+cw+11, y+12.5);
+    y += 22;
+
+    // intro
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...C.ink);
+    const intro = doc.splitTextToSize(`Como parte del servicio integral que ofrecemos a nuestros clientes, le enviamos esta estimación del valor de mercado de su inmueble, basada en el precio por metro cuadrado de inmuebles comparables publicados actualmente en los principales portales inmobiliarios.`, W-2*M);
+    doc.text(intro, M, y); y += intro.length*4.6 + 3;
+
+    // property line
+    const feat = `${ref ? ref + " · " : ""}${s.area} m² · ${s.hab} habitaciones · ${s.banos} baños · ${s.gar} parqueaderos${s.ant?` · ${ANT[s.ant]}`:""}`;
+    doc.setFontSize(9); doc.setTextColor(...C.muted); doc.text(doc.splitTextToSize(feat, W-2*M), M, y); y += 7;
+
+    // verdict panel with gauge
+    const ph = 46;
+    doc.setFillColor(...soft); doc.roundedRect(M, y, W-2*M, ph, 3.5, 3.5, "F");
+    const gx = M+30, gy = y+35, gr = 21;
+    const ang = d => Math.PI*(1 - (Math.max(-.3,Math.min(.3,d))+.3)/.6);
+    const seg = (d0,d1,c) => { doc.setDrawColor(...c); doc.setLineWidth(5); doc.setLineCap("butt"); const n=24; for(let i=0;i<n;i++){ const a0=ang(d0+(d1-d0)*i/n), a1=ang(d0+(d1-d0)*(i+1)/n); doc.line(gx+gr*Math.cos(a0), gy-gr*Math.sin(a0), gx+gr*Math.cos(a1), gy-gr*Math.sin(a1)); } };
+    seg(-.3,-.1,C.bajo); seg(-.1,.1,C.ok); seg(.1,.3,C.alto);
+    const na = ang(diff); doc.setDrawColor(...C.ink); doc.setLineWidth(1.4); doc.setLineCap("round"); doc.line(gx, gy, gx+(gr-7)*Math.cos(na), gy-(gr-7)*Math.sin(na));
+    doc.setFillColor(...C.ink); doc.circle(gx, gy, 2.2, "F"); doc.setLineCap("butt");
+    doc.setFont("helvetica","bold"); doc.setFontSize(6.5); doc.setTextColor(...C.muted);
+    doc.text("BAJO", gx-gr, gy+6, {align:"center"}); doc.text("ALTO", gx+gr, gy+6, {align:"center"}); doc.text("EN RANGO", gx, gy-gr-4.5, {align:"center"});
+    const tx = M+64;
+    doc.setFontSize(9); const pw = doc.getTextWidth(word.toUpperCase()) + 9;
+    doc.setFillColor(...col); doc.roundedRect(tx, y+6, pw, 7, 3.5, 3.5, "F");
+    doc.setTextColor(255,255,255); doc.text(word.toUpperCase(), tx+4.5, y+10.9);
+    doc.setTextColor(...C.ink); doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    doc.text(doc.splitTextToSize(lead, W-M-tx-6), tx, y+20);
+    label("Rango de precio sugerido", tx, y+30);
+    doc.setFont("helvetica","bold"); doc.setFontSize(15); doc.setTextColor(...C.ink);
+    doc.text(`${pdfM(lo)} – ${pdfM(hi)}${unit}`, tx, y+38);
+    y += ph + 6;
+
+    // stat tiles
+    const stats = [["Precio evaluado", pdfM(s.precio)+unit], ["Por m² inmueble", pdfM(user)], ["Mediana por m²", pdfM(v.med)], ["Valor estimado", pdfM(est)+unit]];
+    const sw = (W-2*M-9)/4;
+    stats.forEach(([k,val],i) => { const x = M + i*(sw+3); doc.setDrawColor(...C.line); doc.setLineWidth(0.3); doc.roundedRect(x, y, sw, 15, 2.5, 2.5, "S");
+      label(k, x+4, y+5.5); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...C.ink); doc.text(doc.splitTextToSize(val, sw-8)[0], x+4, y+11.5); });
+    y += 22;
+
     // strip chart
-    doc.setFontSize(10); doc.setFont("helvetica","bold"); doc.text("Dónde queda el precio frente al mercado (precio por m²)", M, y); doc.setFont("helvetica","normal");
-    y += 4;
+    label("Dónde queda frente al mercado · precio por m²", M, y); y += 6;
     const vals = v.comps.map(c=>c.ppm); let a = Math.min(...vals,user), b = Math.max(...vals,user); const pad=(b-a)*0.06||b*0.05; a-=pad; b+=pad;
     const X = val => M + (val-a)/(b-a)*(W-2*M);
-    doc.setFillColor(...C.okS); doc.rect(X(v.p25), y+2, Math.max(1,X(v.p75)-X(v.p25)), 16, "F");
-    doc.setFillColor(...C.accent); v.comps.forEach((c,i) => doc.circle(X(c.ppm), y+6+((i*7)%9), 1.1, "F"));
-    doc.setDrawColor(...C.ok); doc.setLineWidth(0.6); doc.line(X(v.med), y, X(v.med), y+20);
-    doc.setDrawColor(...C.line); doc.setLineWidth(0.3); doc.line(M, y+20, W-M, y+20);
-    doc.setFillColor(...col); doc.triangle(X(user)-2.5, y+25, X(user)+2.5, y+25, X(user), y+21, "F");
-    doc.setFontSize(8); doc.setTextColor(...C.ok); doc.text(`Mediana ${pdfM(v.med)}`, Math.min(W-M-30, Math.max(M+20, X(v.med))), y-1, {align:"center"});
-    doc.setTextColor(...col); doc.text(`Evaluado ${pdfM(user)}`, Math.min(W-M-25, Math.max(M+25, X(user))), y+29, {align:"center"});
-    doc.setTextColor(...C.muted); doc.text("Cada punto es un anuncio comparable. La franja verde es el rango típico (50% central).", M, y+34);
-    y += 41;
-    // comparables table
-    doc.setFontSize(10); doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.text("Anuncios comparables publicados", M, y); doc.setFont("helvetica","normal");
+    doc.setFillColor(...C.soft); doc.roundedRect(X(v.p25), y+2, Math.max(1,X(v.p75)-X(v.p25)), 14, 2, 2, "F");
+    doc.setDrawColor(...C.line); doc.setLineWidth(0.3); doc.line(M, y+16, W-M, y+16);
+    doc.setFillColor(...C.accent); v.comps.forEach((c,i) => doc.circle(X(c.ppm), y+6+((i*7)%8), 1, "F"));
+    doc.setDrawColor(...C.indigo); doc.setLineWidth(0.5); doc.setLineDashPattern([1,0.8],0); doc.line(X(v.med), y, X(v.med), y+17); doc.setLineDashPattern([],0);
+    doc.setFillColor(...col); doc.triangle(X(user)-2.2, y+21, X(user)+2.2, y+21, X(user), y+17.5, "F");
+    doc.setFont("helvetica","normal"); doc.setFontSize(7.5);
+    doc.setTextColor(...C.indigo); doc.text(`Mediana ${pdfM(v.med)}`, Math.min(W-M-22, Math.max(M+22, X(v.med))), y-1, {align:"center"});
+    doc.setTextColor(...col); doc.setFont("helvetica","bold"); doc.text(`Este inmueble ${pdfM(user)}`, Math.min(W-M-26, Math.max(M+26, X(user))), y+25, {align:"center"});
+    y += 30;
+
+    // comparables
+    label(`Anuncios comparables (${v.n} analizados)`, M, y);
     doc.autoTable({
-      startY: y+3, margin:{left:M, right:M},
+      startY: y+2, margin:{left:M, right:M},
       head:[["Barrio","Portal",s.op==="V"?"Precio":"Canon","m²","Precio por m²","Hab","Parq"]],
-      body: v.comps.slice(0,8).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
-      styles:{fontSize:8, cellPadding:1.5, textColor:C.ink, lineColor:C.line, lineWidth:0.1},
-      headStyles:{fillColor:C.accent, textColor:[255,255,255], fontStyle:"bold"},
-      alternateRowStyles:{fillColor:[246,248,247]},
+      body: v.comps.slice(0,4).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
+      theme:"plain",
+      styles:{font:"helvetica", fontSize:8, cellPadding:{top:1.6,bottom:1.6,left:2,right:2}, textColor:C.ink, lineColor:C.line, lineWidth:{bottom:0.2}},
+      headStyles:{fontStyle:"bold", textColor:C.muted, fontSize:7, fillColor:C.field},
       columnStyles:{2:{halign:"right"},3:{halign:"right"},4:{halign:"right"},5:{halign:"center"},6:{halign:"center"}}
     });
-    let fy = doc.lastAutoTable.finalY + 8;
-    if (fy > 270){ doc.addPage(); fy = 20; }
-    doc.setFontSize(7.5); doc.setTextColor(...C.muted);
-    doc.text(doc.splitTextToSize(`Metodología: comparación con ${v.n} anuncios de ${s.op==="V"?"venta":"arriendo"} publicados en Finca Raíz y Metrocuadrado (datos del ${META.actualizado}), del mismo tipo de inmueble, área entre 60% y 160% de la evaluada, ubicados en ${s.barrio} y su entorno, priorizando estrato, área, habitaciones, parqueaderos y antigüedad similares. Se descartan valores atípicos y se usa la mediana ponderada del precio por m². "Alto" o "bajo" indica más de 10% de diferencia frente a esa mediana. Este informe es una referencia de mercado basada en precios de oferta, que suelen ser superiores a los precios de cierre; no constituye un avalúo.`, W-2*M), M, fy);
+
+    // disclaimer
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.5);
+    const dTxt = doc.splitTextToSize(`Esta es una estimación que parte del precio por metro cuadrado. La valoración de elementos subjetivos que puedan aumentar o disminuir el precio (estado y acabados, vista, piso, iluminación, remodelaciones, entre otros) queda a criterio del propietario, con la asesoría y la experiencia de su agente Cool House.`, W-2*M-12);
+    const dh = dTxt.length*3.9 + 7, dy = doc.lastAutoTable.finalY + 5;
+    doc.setFillColor(...C.soft); doc.roundedRect(M, dy, W-2*M, dh, 2.5, 2.5, "F");
+    doc.setFillColor(...C.accent); doc.rect(M, dy, 1.2, dh, "F");
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(...C.ink); doc.text(dTxt, M+6, dy+5.5);
+
+    // footer
+    const fy = H - 18;
+    grad(M, fy-4, W-2*M, 0.6);
+    doc.setFont("helvetica","normal"); doc.setFontSize(6.8); doc.setTextColor(...C.muted);
+    doc.text(doc.splitTextToSize(`Metodología: mediana ponderada del precio por m² de ${v.n} anuncios de ${s.op==="V"?"venta":"arriendo"} comparables (mismo tipo, área entre 60% y 160%, mismo sector, priorizando estrato, habitaciones, parqueaderos y antigüedad), sin valores atípicos. Datos del ${META.actualizado}. "Alto" o "bajo" indica más de 10% de diferencia con la mediana. Es una referencia basada en precios de oferta, que suelen superar los de cierre; no constituye un avalúo.`, W-2*M-62), M, fy+1);
+    doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.setTextColor(...C.ink);
+    doc.text(firma(), W-M, fy+1.5, {align:"right"});
+    doc.setFont("helvetica","normal"); doc.setFontSize(7.5); doc.setTextColor(...C.muted);
+    doc.text("Termómetro Inmobiliario Cool House", W-M, fy+6, {align:"right"});
     return doc;
   }
   async function downloadPdf(){
     const msg = $("copied");
     if (!window.jspdf || !LAST){ msg.textContent = "No se pudo preparar el PDF. Recarga la página e inténtalo de nuevo."; return; }
-    const name = `Informe precio ${LAST.s.barrio} ${LAST.s.area}m2.pdf`.replace(/[\\/:*?"<>|]+/g," ");
+    const cli = $("cliente").value.trim();
+    const name = `Estimacion de mercado ${cli || LAST.s.barrio} - Cool House.pdf`.replace(/[\\/:*?"<>|]+/g," ");
     const blob = buildPdf().output("blob");
     const dl = await (window.claude?.use ? window.claude.use("downloads") : null);
     if (dl){
@@ -347,65 +505,16 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     msg.textContent = "Informe descargado";
   }
-  try { $("agente").value = localStorage.getItem("tm-agente") || ""; } catch {}
-  $("agente").addEventListener("change", e => { try { localStorage.setItem("tm-agente", e.target.value.trim()); } catch {} });
-  function render(s, isExample){
-    const el = $("report");
-    const v = valuate(s);
-    if (!v.n){ el.innerHTML = `<p class="empty">No encontré anuncios comparables para <b>${esc(s.barrio)}</b> con esas características. Revisa el nombre del barrio (elige uno de la lista) o el área.</p>`; return; }
-    const user = s.precio/s.area, diff = (user - v.med)/v.med;
-    const cls = diff > 0.10 ? "alto" : diff < -0.10 ? "bajo" : "ok";
-    const word = {alto:"Precio alto", bajo:"Precio bajo", ok:"Precio en rango"}[cls];
-    const est = v.med*s.area, lo = v.p25*s.area, hi = v.p75*s.area;
-    const unit = s.op==="V" ? "" : " /mes";
-    const pct = Math.round(Math.abs(diff)*100);
-    const lead = cls==="ok" ? `Está a ${pct}% de la mediana del mercado comparable.` : `Está ${pct}% ${cls==="alto"?"por encima":"por debajo"} de la mediana del mercado comparable.`;
-    const zona = v.radius ? `${esc(s.barrio)} y alrededores (hasta ${v.radius.toString().replace(".",",")} km)` : esc(s.barrio);
-    const rows = v.comps.slice(0,15).map(c => `<tr><td>${esc(c.barrio)}</td><td><span class="src">${c.portal==="FR"?"Finca Raíz":"Metrocuadrado"}</span></td><td>${copM(c.precio)}</td><td>${Math.round(c.m2)}</td><td>${copM(c.ppm)}</td><td>${c.hab??"–"}</td><td>${c.gar??"–"}</td><td>${c.estrato??"–"}</td><td>${/^https:\/\//.test(c.url)?`<a href="${esc(c.url)}" target="_blank" rel="noopener">Ver</a>`:"–"}</td></tr>`).join("");
-    el.innerHTML = `
-      <div class="verdict ${cls}">
-        ${isExample?'<span class="example">Ejemplo: cambia los datos y genera tu informe</span>':''}
-        <span class="tag">${word}</span>
-        <h3>${copM(s.precio)}${unit} por ${s.area} m² en ${esc(s.barrio)}</h3>
-        <p>${lead} Precio sugerido: <b>${copM(lo)} a ${copM(hi)}${unit}</b>.</p>
-      </div>
-      <div class="stats">
-        <div class="stat"><div class="k">Precio consultado por m²</div><div class="v">${copM(user)}</div><div class="s">${unit?"mensual":"venta"}</div></div>
-        <div class="stat"><div class="k">Mediana del mercado por m²</div><div class="v">${copM(v.med)}</div><div class="s">rango típico ${copM(v.p25)} – ${copM(v.p75)}</div></div>
-        <div class="stat"><div class="k">Valor estimado</div><div class="v">${copM(est)}${unit}</div><div class="s">${s.area} m² × mediana</div></div>
-        <div class="stat"><div class="k">Comparables</div><div class="v">${v.n}</div><div class="s">confianza ${v.conf.toLowerCase()}</div></div>
-      </div>
-      <div class="chart">${strip(v,s)}<div class="cap">Cada punto es un anuncio comparable (precio por m²). La franja verde es el rango típico del 50% central.</div></div>
-      <div class="actions"><button class="btn" id="pdf" type="button">Descargar informe PDF</button><button class="btn ghost" id="copy" type="button">Copiar texto</button><span class="hint" id="copied" role="status"></span></div>
-      <h2 style="font-family:var(--font-display);font-size:15px;margin:6px 0 10px">Anuncios comparables · ${zona}</h2>
-      <div class="tablebox"><table>
-        <thead><tr><th>Barrio</th><th>Portal</th><th>Precio${unit}</th><th>m²</th><th>$/m²</th><th>Hab</th><th>Parq</th><th>Estr</th><th></th></tr></thead>
-        <tbody>${rows}</tbody></table></div>
-      <p class="note">Método: se toman anuncios de ${s.op==="V"?"venta":"arriendo"} del mismo tipo, área entre 60% y 160% de la del inmueble, en el barrio y su entorno, priorizando el mismo estrato, área, habitaciones, parqueaderos y antigüedad. Se descartan valores atípicos y se usa la mediana ponderada del precio por m². "Alto" o "bajo" significa más de 10% de diferencia con esa mediana. Los precios de anuncio suelen estar por encima del precio final de cierre.</p>`;
-    lastText = [
-      `TERMÓMETRO INMOBILIARIO COOL HOUSE · ${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} estrato ${s.estrato}`,
-      `Como parte del servicio integral que ofrecemos a nuestros clientes, le enviamos una estimación del valor de mercado basada en el precio por metro cuadrado.`,
-      `${s.barrio}, Bogotá · ${s.area} m² · ${s.hab} hab · ${s.banos} baños · ${s.gar} parq${s.ant?` · ${ANT[s.ant]}`:""}`,
-      `Precio consultado: ${cop(s.precio)}${unit} (${cop(user)}/m²)`,
-      `Resultado: ${word.toUpperCase()} — ${lead}`,
-      `Mediana del mercado: ${cop(v.med)}/m² · rango típico ${cop(v.p25)} – ${cop(v.p75)}/m²`,
-      `Precio sugerido: ${cop(lo)} a ${cop(hi)}${unit}`,
-      `Base: ${v.n} anuncios comparables de Finca Raíz y Metrocuadrado (actualizado ${META.actualizado}). Confianza ${v.conf.toLowerCase()}.`
-    ].join("\n");
-    LAST = {s, v, cls, word, lead, est, lo, hi, unit, user, diff};
-    $("pdf").addEventListener("click", downloadPdf);
-    $("copy").addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText(lastText); $("copied").textContent = "Informe copiado"; }
-      catch { const ta = document.createElement("textarea"); ta.value = lastText; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); $("copied").textContent="Informe copiado";}catch{ $("copied").textContent="Selecciona y copia el texto manualmente"; } ta.remove(); }
-    });
-  }
 
   function readForm(){
     return { op: $("op-a").checked ? "A" : "V", tipo: $("tipo").value, estrato: +$("estrato").value, barrio: $("barrio").value.trim(),
       area: +$("area").value, hab: +$("hab").value || 0, banos: +$("banos").value || 0, gar: +$("garajes").value || 0,
       ant: +$("antig").value || 0, precio: parseMoney($("precio").value) };
   }
-
+  const updateSig = () => { const sig = $("sig"); sig.textContent = "Así firma el informe: "; const b = document.createElement("b"); b.textContent = firma(); sig.appendChild(b); };
+  try { $("agente").value = localStorage.getItem("tm-agente") || ""; } catch {}
+  updateSig();
+  $("agente").addEventListener("input", () => { updateSig(); try { localStorage.setItem("tm-agente", $("agente").value.trim()); } catch {} });
   $("precio").addEventListener("input", e => { const n = parseMoney(e.target.value); e.target.value = n ? n.toLocaleString("es-CO") : ""; });
   document.querySelectorAll('input[name="op"]').forEach(r => r.addEventListener("change", () => {
     $("precio-label").textContent = $("op-a").checked ? "Canon mensual consultado (COP)" : "Precio consultado (COP)";
@@ -415,23 +524,21 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     const s = readForm();
     if (!s.barrio || !s.area || !s.precio) return;
     render(s, false);
-    if (matchMedia("(max-width:860px)").matches) $("report").scrollIntoView({behavior:"smooth"});
+    if (matchMedia("(max-width:900px)").matches) $("report").scrollIntoView({behavior:"smooth"});
   });
 
-  let LOGO = null;
   fetch("img/logo-cool-house.png").then(r => r.ok ? r.blob() : null).then(b => { if (!b) return; const fr = new FileReader(); fr.onload = () => { LOGO = fr.result; }; fr.readAsDataURL(b); }).catch(() => {});
   fetch("datos/mercado.json").then(r => { if(!r.ok) throw new Error(r.status); return r.json(); }).then(data => {
     prep(data);
-    const ex = data.ejemplo || {op:"V",tipo:"Apartamento",estrato:6,barrio:"Rosales",area:150,hab:3,banos:3,gar:2,ant:3,precio:2100000000};
+    const ex = data.ejemplo || {op:"V",tipo:"Apartamento",estrato:6,barrio:"Los Rosales",area:150,hab:3,banos:3,gar:2,ant:4,precio:1460000000};
     $("barrio").value = ex.barrio; $("area").value = ex.area; $("hab").value = ex.hab; $("banos").value = ex.banos; $("garajes").value = ex.gar;
     $("antig").value = String(ex.ant||""); $("estrato").value = String(ex.estrato); $("tipo").value = ex.tipo; $("precio").value = ex.precio.toLocaleString("es-CO");
     render(ex, true);
   }).catch(() => {
-    $("meta").textContent = "No se pudieron cargar los datos del mercado";
+    $("chips").textContent = "No se pudieron cargar los datos del mercado";
     $("report").innerHTML = '<p class="empty">No se pudieron cargar los anuncios del mercado. Recarga la página en unos minutos.</p>';
   });
 })();
 </script>
-
 </body>
 </html>
