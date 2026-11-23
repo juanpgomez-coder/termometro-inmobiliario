@@ -4,26 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Valora en segundos si el precio de un inmueble de estrato 5 o 6 en Bogotá está alto, en rango o bajo frente a los anuncios de Finca Raíz y Metrocuadrado.">
-<title>Termómetro Inmobiliario</title>
+<title>Termómetro Inmobiliario · Cool House</title>
+<link rel="icon" href="img/logo-cool-house.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
 <style>
 :root{color-scheme:light}html{-webkit-text-size-adjust:100%}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
-/* Layout: form column on the left, report on the right; stacks on phones. */
+/* Layout: white brand bar with the Cool House logo, then form column + report; stacks on phones.
+   Palette from the logo: black "COOL", blue gradient "HOUSE" (sky #5b9bd5 to indigo #4652a0). */
 :root{
-  --bg:#f3f5f4; --surface:#ffffff; --ink:#15232b; --muted:#5d6b72; --line:#dde3e1;
-  --accent:#0f6b63; --accent-soft:#e1efec;
-  --high:#b4372b; --high-soft:#f8e4e1; --low:#2f5fa8; --low-soft:#e2eaf6; --ok:#2c7a3f; --ok-soft:#e2f1e5;
-  --font-display:"Manrope",system-ui,sans-serif; --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#111418; --muted:#5c6575; --line:#dde2ec;
+  --accent:#3e6db5; --accent-2:#4652a0; --accent-sky:#5b9bd5; --accent-soft:#e7eef9;
+  --high:#b4372b; --high-soft:#f8e4e1; --low:#9a6a12; --low-soft:#f6eddb; --ok:#2c7a3f; --ok-soft:#e2f1e5;
+  --font-display:"Montserrat",system-ui,sans-serif; --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0f1619; --surface:#172126; --ink:#e7eeec; --muted:#97a6ab; --line:#2a373d;
-  --accent:#4fc1b2; --accent-soft:#173a37;
-  --high:#f07c6e; --high-soft:#3b1f1c; --low:#86aef0; --low-soft:#1b2a42; --ok:#7bcf8d; --ok-soft:#18321f; color-scheme:dark}}
+  --bg:#0d1016; --surface:#161b24; --ink:#eceff5; --muted:#9aa3b3; --line:#283040;
+  --accent:#7da7e6; --accent-2:#8f9ae0; --accent-sky:#7fb6e8; --accent-soft:#1b2740;
+  --high:#f07c6e; --high-soft:#3b1f1c; --low:#e0b45c; --low-soft:#3a2e15; --ok:#7bcf8d; --ok-soft:#18321f; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0f1619; --surface:#172126; --ink:#e7eeec; --muted:#97a6ab; --line:#2a373d;
-  --accent:#4fc1b2; --accent-soft:#173a37;
-  --high:#f07c6e; --high-soft:#3b1f1c; --low:#86aef0; --low-soft:#1b2a42; --ok:#7bcf8d; --ok-soft:#18321f; color-scheme:dark}
+  --bg:#0d1016; --surface:#161b24; --ink:#eceff5; --muted:#9aa3b3; --line:#283040;
+  --accent:#7da7e6; --accent-2:#8f9ae0; --accent-sky:#7fb6e8; --accent-soft:#1b2740;
+  --high:#f07c6e; --high-soft:#3b1f1c; --low:#e0b45c; --low-soft:#3a2e15; --ok:#7bcf8d; --ok-soft:#18321f; color-scheme:dark}
+.brandbar{background:#ffffff;border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#5b9bd5,#4652a0) 1}
+.brandbar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brandbar img{height:46px;width:auto;display:block}
+.brandbar .tagline{font-family:var(--font-display);font-weight:500;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#4652a0}
+@media (max-width:520px){.brandbar .tagline{display:none}.brandbar img{height:40px}}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5}
 .wrap{max-width:1180px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -46,7 +53,8 @@ input:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid 
 .seg span{display:block;padding:9px}
 .seg input:checked+span{background:var(--accent);color:var(--surface);font-weight:600}
 .seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-3px}
-.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:11px 14px;background:var(--accent);color:var(--surface);cursor:pointer}
+.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:11px 14px;background:var(--accent);background-image:linear-gradient(90deg,var(--accent),var(--accent-2));color:var(--surface);cursor:pointer}
+.btn.ghost{background-image:none}
 .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
 .hint{font-size:12px;color:var(--muted);margin:0}
 .verdict{display:grid;gap:6px;padding:20px;border-radius:12px;margin-bottom:16px}
@@ -79,6 +87,10 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
+<div class="brandbar"><div class="in">
+  <img src="img/logo-cool-house.png" alt="Cool House" width="240" height="124">
+  <span class="tagline">Inmobiliaria · Bogotá</span>
+</div></div>
 <div class="wrap">
   <header>
     <div>
@@ -248,18 +260,19 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({unit:"mm", format:"a4"});
     const W = 210, M = 16;
-    const C = {ink:[21,35,43], muted:[93,107,114], line:[221,227,225], accent:[15,107,99],
-      alto:[180,55,43], bajo:[47,95,168], ok:[44,122,63], altoS:[248,228,225], bajoS:[226,234,246], okS:[226,241,229]};
+    const C = {ink:[17,20,24], muted:[92,101,117], line:[221,226,236], accent:[62,109,181], accent2:[70,82,160], sky:[91,155,213],
+      alto:[180,55,43], bajo:[154,106,18], ok:[44,122,63], altoS:[248,228,225], bajoS:[246,237,219], okS:[226,241,229]};
     const agente = $("agente").value.trim(), prop = $("propietario").value.trim(), ref = $("referencia").value.trim();
     const hoy = new Date().toLocaleDateString("es-CO",{day:"numeric",month:"long",year:"numeric"});
-    // header band
-    doc.setFillColor(...C.accent); doc.rect(0,0,W,30,"F");
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(18);
-    doc.text("Informe de precio de mercado", M, 15);
-    doc.setFont("helvetica","normal"); doc.setFontSize(10);
-    doc.text(`${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} · Estrato ${s.estrato} · Bogotá`, M, 23);
-    doc.text(hoy, W-M, 23, {align:"right"});
-    let y = 40;
+    // header: Cool House logo left, report title right, blue gradient rule below
+    if (LOGO) { try { doc.addImage(LOGO, "PNG", M, 8, 40, 20.7); } catch {} }
+    doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.setFontSize(16);
+    doc.text("Informe de precio de mercado", W-M, 16, {align:"right"});
+    doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(...C.muted);
+    doc.text(`${s.op==="V"?"Venta":"Arriendo"} · ${s.tipo} · Estrato ${s.estrato} · Bogotá`, W-M, 22, {align:"right"});
+    doc.text(hoy, W-M, 27, {align:"right"});
+    for (let i = 0; i < 60; i++){ const t = i/59, c = C.sky.map((v,k)=>Math.round(v+(C.accent2[k]-v)*t)); doc.setFillColor(...c); doc.rect(M + (W-2*M)*i/60, 32, (W-2*M)/60 + 0.2, 1.2, "F"); }
+    let y = 42;
     doc.setTextColor(...C.ink); doc.setFontSize(10);
     const metaL = [];
     if (prop) metaL.push(["Para", prop]);
@@ -401,6 +414,8 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     if (matchMedia("(max-width:860px)").matches) $("report").scrollIntoView({behavior:"smooth"});
   });
 
+  let LOGO = null;
+  fetch("img/logo-cool-house.png").then(r => r.ok ? r.blob() : null).then(b => { if (!b) return; const fr = new FileReader(); fr.onload = () => { LOGO = fr.result; }; fr.readAsDataURL(b); }).catch(() => {});
   fetch("datos/mercado.json").then(r => { if(!r.ok) throw new Error(r.status); return r.json(); }).then(data => {
     prep(data);
     const ex = data.ejemplo || {op:"V",tipo:"Apartamento",estrato:6,barrio:"Rosales",area:150,hab:3,banos:3,gar:2,ant:3,precio:2100000000};
