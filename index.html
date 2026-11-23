@@ -284,16 +284,16 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     metaL.push(["Ubicación", `${s.barrio}, Bogotá`]);
     metaL.push(["Características", `${s.area} m² · ${s.hab} habitaciones · ${s.banos} baños · ${s.gar} parqueaderos${s.ant?` · ${ANT[s.ant]}`:""}`]);
     metaL.push([s.op==="V"?"Precio evaluado":"Canon evaluado", `${pdfCop(s.precio)}${unit}  (${pdfCop(user)} por m²)`]);
-    for (const [k,val] of metaL){ doc.setFont("helvetica","bold"); doc.setTextColor(...C.muted); doc.text(k, M, y); doc.setFont("helvetica","normal"); doc.setTextColor(...C.ink); doc.text(doc.splitTextToSize(val, W-2*M-42), M+42, y); y += 6.5; }
+    for (const [k,val] of metaL){ doc.setFont("helvetica","bold"); doc.setTextColor(...C.muted); doc.text(k, M, y); doc.setFont("helvetica","normal"); doc.setTextColor(...C.ink); doc.text(doc.splitTextToSize(val, W-2*M-42), M+42, y); y += 5.8; }
     // verdict box
     y += 3;
     const col = C[cls==="ok"?"ok":cls], soft = C[(cls==="ok"?"ok":cls)+"S"];
-    doc.setFillColor(...soft); doc.roundedRect(M, y, W-2*M, 30, 3, 3, "F");
+    doc.setFillColor(...soft); doc.roundedRect(M, y, W-2*M, 27, 3, 3, "F");
     doc.setFillColor(...col); doc.roundedRect(M+6, y+6, doc.getTextWidth(word.toUpperCase())*1.15+10, 8, 4, 4, "F");
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.text(word.toUpperCase(), M+11, y+11.6);
     doc.setTextColor(...C.ink); doc.setFontSize(11); doc.setFont("helvetica","normal");
-    doc.text(doc.splitTextToSize(`${lead} Rango de precio sugerido: ${pdfM(lo)} a ${pdfM(hi)}${unit}.`, W-2*M-12), M+6, y+21);
-    y += 36;
+    doc.text(doc.splitTextToSize(`${lead} Rango de precio sugerido: ${pdfM(lo)} a ${pdfM(hi)}${unit}.`, W-2*M-12), M+6, y+19.5);
+    y += 33;
     // stats row
     const stats = [["Precio por m² evaluado", pdfM(user)], ["Mediana del mercado por m²", pdfM(v.med)], ["Valor estimado", pdfM(est)+unit], ["Anuncios comparables", `${v.n} (confianza ${v.conf.toLowerCase()})`]];
     const sw = (W-2*M)/4;
@@ -314,13 +314,13 @@ td a{color:var(--accent);text-decoration:none;font-weight:600}
     doc.setFontSize(8); doc.setTextColor(...C.ok); doc.text(`Mediana ${pdfM(v.med)}`, Math.min(W-M-30, Math.max(M+20, X(v.med))), y-1, {align:"center"});
     doc.setTextColor(...col); doc.text(`Evaluado ${pdfM(user)}`, Math.min(W-M-25, Math.max(M+25, X(user))), y+29, {align:"center"});
     doc.setTextColor(...C.muted); doc.text("Cada punto es un anuncio comparable. La franja verde es el rango típico (50% central).", M, y+34);
-    y += 38;
+    y += 41;
     // comparables table
     doc.setFontSize(10); doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.text("Anuncios comparables publicados", M, y); doc.setFont("helvetica","normal");
     doc.autoTable({
       startY: y+3, margin:{left:M, right:M},
       head:[["Barrio","Portal",s.op==="V"?"Precio":"Canon","m²","Precio por m²","Hab","Parq"]],
-      body: v.comps.slice(0,10).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
+      body: v.comps.slice(0,8).map(c => [c.barrio, c.portal==="FR"?"Finca Raíz":"Metrocuadrado", pdfCop(c.precio), String(Math.round(c.m2)), pdfCop(c.ppm), c.hab ?? "-", c.gar ?? "-"]),
       styles:{fontSize:8, cellPadding:1.5, textColor:C.ink, lineColor:C.line, lineWidth:0.1},
       headStyles:{fillColor:C.accent, textColor:[255,255,255], fontStyle:"bold"},
       alternateRowStyles:{fillColor:[246,248,247]},
